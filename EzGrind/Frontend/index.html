@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>EzGrind | Dashboard</title>
+
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700&display=swap" rel="stylesheet">
+
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+    <div class="brand">
+        <img src="assets/logo.png" alt="EzGrind Logo">
+        <h2 class="app-name">EzGrind</h2>
+    </div>
+    <button class="profile-btn" onclick="openProfile()">
+        <a href="profile.html">
+        <img src="assets/profile.png" alt="Profile">
+        </a>
+</button>
+
+</nav>
+
+
+    <!-- Hero Dashboard Section -->
+    <section class="hero">
+
+        <div class="hero-text">
+            <span class="tagline"># Track. Train. Triumph.</span>
+            <h3 id="greetingText"></h3>
+            <h1>
+                Your daily dose  <br>
+                of <span class="highlight">discipline</span>
+            </h1>
+
+            <p>
+                Track workouts, monitor muscle balance, and stay consistent
+                with a clean and simple fitness dashboard.
+            </p>
+
+            <button class="cta-btn" id="startTodayBtn">START TODAY →</button>
+
+            <button id="letsGrindBtn" class="cta-btn" style="display: none;"> LET'S GRIND →</button>
+
+        </div>
+
+        <div class="hero-image">
+            <img src="assets/phone.png" alt="EzGrind App Preview">
+        </div>
+
+    </section>
+    
+    <section id="todayWorkoutSection" style="display: none;">
+    <h3>Today’s Workout</h3>
+    <ul id="todayWorkoutList"></ul>
+
+    <a href="history.html" id="historyBtn" class="small-cta-btn" style="display:none;">
+    View Full History
+</a>
+
+    </section>
+    
+
+
+    <!-- Steps Section -->
+    <section class="steps">
+
+    <div class="steps-header">
+    <img src="assets/DB.png" alt="Dumbbell Icon">
+    <h2 class="steps-title">Hit your fitness goals in 1-2-3</h2>
+    </div>
+
+
+    <!-- Step 1 -->
+    <div class="step">
+        <div class="step-image">
+            <img src="assets/step1.png" alt="Track workouts">
+        </div>
+        <div class="step-text">
+            <span class="step-number">1</span>
+            <h3><span class="highlight">Track workouts and muscles</span></h3>
+            <p>
+                Log your exercises, sets, reps, and target muscles
+                with a clean and simple tracking system.
+            </p>
+        </div>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="step reverse">
+        <div class="step-image">
+            <img src="assets/step2.png" alt="Progress tracking">
+        </div>
+        <div class="step-text">
+            <span class="step-number">2</span>
+            <h3><span class="highlight">Follow your progress</span></h3>
+            <p>
+                Visualize your weekly training, muscle balance,
+                and consistency to stay on track.
+            </p>
+        </div>
+    </div>
+
+    <!-- Step 3 -->
+    <div class="step">
+        <div class="step-image">
+            <img src="assets/step3.png" alt="Stay consistent">
+        </div>
+        <div class="step-text">
+            <span class="step-number">3</span>
+            <h3><span class="highlight">Stay consistent and improve</span></h3>
+            <p>
+                Build sustainable fitness habits and steadily
+                improve performance over time.
+            </p>
+        </div>
+    </div>
+
+</section>
+
+
+    <footer class="footer">
+        EzGrind © 2026
+    </footer>
+
+    <script src="js/dashboard.js"></script>
+
+<!-- Auth Choice Modal -->
+<div id="authModal" class="auth-modal">
+    <div class="auth-modal-content">
+        <h3>Welcome to EzGrind 💪</h3>
+        <p>Please login or create an account to continue.</p>
+
+        <button id="loginRedirectBtn" class="small-cta-btn">
+            Log In
+        </button>
+
+        <button id="signupRedirectBtn" class="small-cta-btn">
+            Sign Up
+        </button>
+    </div>
+</div>
+
+
+</body>
+</html>

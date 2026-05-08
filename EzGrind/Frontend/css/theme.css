@@ -1,0 +1,85 @@
+/* ============================= */
+/* EZGRIND GLOBAL THEME */
+/* ============================= */
+
+body {
+    margin: 0;
+    padding: 60px 100px;
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #0f0f0f, #1a1a1a 40%, #3a3300);
+    color: #ffffff;
+}
+
+/* Headings */
+h1, h2 {
+    margin-bottom: 40px;
+    font-weight: 600;
+}
+
+/* ============================= */
+/* FORM ELEMENTS */
+/* ============================= */
+
+.auth-input,
+.auth-select {
+    width: 300px;
+    padding: 12px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    border: none;
+    background: #0e0e0e;
+    color: #ffffff;
+    font-size: 14px;
+    outline: none;
+    transition: 0.3s ease;
+    display: block;
+}
+
+.auth-input:focus,
+.auth-select:focus {
+    border: 1px solid #d4af37;
+    box-shadow: 0 0 8px rgba(212, 175, 55, 0.6);
+}
+
+/* ============================= */
+/* BUTTONS */
+/* ============================= */
+
+.theme-btn {
+    padding: 12px 30px;
+    border-radius: 30px;
+    border: none;
+    background: linear-gradient(90deg, #d4af37, #facc15);
+    color: #000;
+    font-weight: 600;
+    font-size: 15px;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.theme-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(212, 175, 55, 0.4);
+}
+
+/* ============================= */
+/* PROFILE INFO */
+/* ============================= */
+
+.profile-item {
+    margin-bottom: 15px;
+    font-size: 16px;
+}
+
+.profile-label {
+    font-weight: 600;
+    color: #d4af37;
+}
+
+/* ============================= */
+/* LOG WORKOUT LAYOUT */
+/* ============================= */
+
+.form-row {
+    margin-bottom: 20px;
+}

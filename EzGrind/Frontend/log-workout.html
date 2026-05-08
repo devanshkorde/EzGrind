@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>EzGrind | Log Workout</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <nav class="navbar">
+        <h2>EzGrind</h2>
+    </nav>
+
+    <section class="log-workout">
+    <link rel="stylesheet" href="css/theme.css">
+    <div class="theme-card">
+        
+        <h1>Log Workout</h1>
+        <form id="workoutForm">
+            <label>Muscle</label>
+            <select id="muscleSelect"></select>
+
+            <label>Exercise</label>
+            <select id="exerciseSelect"></select>
+
+            <label>Weight (kg)</label>
+            <input type="number" id="weight" required>
+
+            <label>Reps</label>
+            <input type="number" id="reps" required>
+
+            <label>Time Under Tension (seconds)</label>
+            <input type="number" id="tut">
+
+            <button type="submit">Add Set</button>
+        </form>
+    </div>
+    <p id="status"></p>
+    </section>
+
+    <script src="js/logWorkout.js"></script>
+</body>
+</html>

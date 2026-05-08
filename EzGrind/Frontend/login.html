@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>EzGrind | Login</title>
+
+</head>
+<body>
+<link rel="stylesheet" href="css/theme.css">
+<div class="theme-card">
+     <h2>Login to EzGrind</h2>
+
+    <form id="loginForm">
+    <input type="email" id="email" placeholder="Email" class="auth-input" required><br><br>
+    <input type="password" id="password" placeholder="Password" class="auth-input" required><br><br>
+
+    <button type="submit" id="loginBtn" class="theme-btn">Login</button>
+</form>
+</div>
+
+<p id="status"></p>
+
+<script>
+document.getElementById("loginForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    fetch("http://127.0.0.1:5000/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",   // VERY IMPORTANT for sessions
+        body: JSON.stringify({
+            email: document.getElementById("email").value,
+            password: document.getElementById("password").value
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        document.getElementById("status").innerText = data.message;
+
+        if (data.user) {
+            // redirect after login
+            window.location.href = "index.html"; // dashboard
+        }
+    });
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sign Up | EzGrind</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<section>
+<div class="theme-card signup-card">
+  <h2>Create Your EzGrind Account💪</h2>
+
+  <form id="signupForm">
+
+    <input type="text" placeholder="Full Name" id="fullName" required>
+    <input type="email" placeholder="Email" id="email" required>
+    <input type="text" placeholder="Contact Number" id="contact">
+    <input type="date" id="dob">
+    <input type="number" placeholder="Height (cm)" id="height">
+    <input type="number" placeholder="Weight (kg)" id="weight">
+
+    <select id="fitnessGoal">
+        <option value="">Select Fitness Goal</option>
+        <option value="gain">Gain Weight</option>
+        <option value="lose">Lose Weight</option>
+        <option value="maintain">Maintain Weight</option>
+        <option value="muscle">Build Muscle</option>
+    </select>
+
+    <input type="password" placeholder="Password" id="password" required>
+
+    <button type="submit" class="cta-btn">Sign Up</button>
+
+  </form>
+</div>
+<script src="js/signup.js"></script>
+
+</body>
+</html>
