@@ -1,0 +1,12 @@
+Flask==3.0.3
+Werkzeug==3.0.3
+Flask-Cors==4.0.1
+Flask-Limiter==3.8.0
+mysql-connector-python==8.4.0
+python-dotenv==1.0.1
+
+# Mozilla's CA bundle. No dependencies of its own - it is a .pem file and a
+# where() function. Needed because this project's MSYS2/mingw64 Python looks
+# for its trust store at a path that does not exist and therefore loads zero
+# CA certificates, which makes every HTTPS request fail verification.
+certifi==2026.7.22
