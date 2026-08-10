@@ -1,0 +1,13 @@
+Reset your password
+
+Someone asked to reset the password for the EzGrind account using this
+address. Choose a new one here:
+
+{{ reset_url }}
+
+This link expires in {{ ttl_minutes }} minutes and can only be used once.
+
+If you didn't ask for this, ignore this email. Your password will not change
+and nothing has happened to your account.
+
+— EzGrind

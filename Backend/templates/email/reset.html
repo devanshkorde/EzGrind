@@ -1,0 +1,58 @@
+{% extends "email/base.html" %}
+
+{% block preheader %}This link expires in {{ ttl_minutes }} minutes.{% endblock %}
+
+{% block content %}
+   <tr><td style="padding:24px 40px 0 40px;">
+     <h1 style="margin:0;font-family:Helvetica,Arial,sans-serif;font-size:26px;
+                line-height:32px;font-weight:bold;color:#F5F5F5;">
+       Reset your password
+     </h1>
+   </td></tr>
+
+   <tr><td style="padding:16px 40px 0 40px;">
+     <p style="margin:0;font-family:Helvetica,Arial,sans-serif;font-size:16px;
+               line-height:24px;color:#F5F5F5;">
+       Someone asked to reset the password for the EzGrind account using this
+       address. Choose a new one here:
+     </p>
+   </td></tr>
+
+   {# Bulletproof button: the colour is on bgcolor as well as in CSS, so it
+      survives a client that drops the style attribute or border-radius. #}
+   <tr><td align="center" style="padding:32px 40px 0 40px;">
+     <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+      <tr><td align="center" bgcolor="#C9A84C" style="border-radius:12px;">
+        <a href="{{ reset_url }}"
+           style="display:inline-block;padding:16px 36px;
+                  font-family:Helvetica,Arial,sans-serif;font-size:16px;
+                  font-weight:bold;color:#080808;text-decoration:none;
+                  border-radius:12px;">Choose a new password</a>
+      </td></tr>
+     </table>
+   </td></tr>
+
+   <tr><td style="padding:24px 40px 0 40px;">
+     <p style="margin:0 0 8px 0;font-family:Helvetica,Arial,sans-serif;
+               font-size:13px;line-height:20px;color:#9A9A9A;">
+       If the button doesn't work, paste this into your browser:
+     </p>
+     <p style="margin:0;font-family:Helvetica,Arial,sans-serif;font-size:13px;
+               line-height:20px;color:#C9A84C;word-break:break-all;">
+       {{ reset_url }}
+     </p>
+   </td></tr>
+
+   <tr><td style="padding:24px 40px 0 40px;">
+     <p style="margin:0 0 8px 0;font-family:Helvetica,Arial,sans-serif;
+               font-size:15px;line-height:22px;color:#F5F5F5;">
+       <strong>This link expires in {{ ttl_minutes }} minutes</strong> and can
+       only be used once.
+     </p>
+     <p style="margin:0;font-family:Helvetica,Arial,sans-serif;font-size:15px;
+               line-height:22px;color:#9A9A9A;">
+       If you didn't ask for this, ignore this email. Your password will not
+       change and nothing has happened to your account.
+     </p>
+   </td></tr>
+{% endblock %}
