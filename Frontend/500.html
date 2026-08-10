@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="EzGrind hit an unexpected error.">
+    <title>EzGrind | Something went wrong</title>
+
+    <link rel="icon" href="assets/logo.png">
+    <link rel="stylesheet" href="css/tokens.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/pages.css">
+    <link rel="stylesheet" href="css/motion.css">
+
+    <!-- Sets the class every hidden starting state in motion.css hangs
+         off. Inline and synchronous so it lands before first paint, and
+         absent if scripting is off - in which case nothing is ever
+         hidden and the page renders as ordinary content. -->
+    <script>document.documentElement.classList.add("js-enabled");</script>
+</head>
+<body>
+
+    <header id="siteHeader" class="nav"></header>
+
+    <main class="page shell-centered">
+        <div class="card error-page">
+            <p class="error-page__code" aria-hidden="true">500</p>
+            <h1 class="page-header__title">Something went wrong on our end</h1>
+            <p class="text-muted">
+                This one is not your fault. Your training data is stored separately
+                and is unaffected — try again in a moment.
+            </p>
+            <div class="cluster error-page__actions">
+                <button type="button" class="btn btn--primary" data-reload>
+                    <span>Try again</span>
+                </button>
+                <a class="btn btn--secondary" href="index.html">
+                    <span>Back to dashboard</span>
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <footer id="siteFooter" class="footer"></footer>
+
+    <script src="js/api.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/motion.js"></script>
+    <script src="js/components/shell.js"></script>
+
+</body>
+</html>

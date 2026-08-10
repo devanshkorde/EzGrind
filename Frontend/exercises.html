@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Browse the EzGrind exercise library by muscle group and equipment.">
+    <title>EzGrind | Exercise Library</title>
+
+    <link rel="icon" href="assets/logo.png">
+    <link rel="stylesheet" href="css/tokens.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/pages.css">
+    <link rel="stylesheet" href="css/motion.css">
+
+    <!-- Sets the class every hidden starting state in motion.css hangs
+         off. Inline and synchronous so it lands before first paint, and
+         absent if scripting is off - in which case nothing is ever
+         hidden and the page renders as ordinary content. -->
+    <script>document.documentElement.classList.add("js-enabled");</script>
+</head>
+<body>
+
+    <header id="siteHeader" class="nav"></header>
+
+    <main class="page container section">
+
+        <div class="page-header">
+            <h1 class="page-header__title">Exercise Library</h1>
+            <p class="page-header__subtitle">Every movement EzGrind can track, grouped by the muscle it works.</p>
+        </div>
+
+        <form class="filter-bar filter-bar--sticky" id="filterBar">
+
+            <div class="field filter-bar__row">
+                <label class="field__label" for="searchInput">Search</label>
+                <input class="input" type="search" id="searchInput" name="q"
+                       placeholder="Search by exercise name…" autocomplete="off">
+            </div>
+
+            <div class="field filter-bar__row">
+                <span class="field__label" id="muscleChipsLabel">Muscle groups</span>
+                <div class="chips" id="muscleChips" role="group"
+                     aria-labelledby="muscleChipsLabel"></div>
+            </div>
+
+            <div class="field">
+                <label class="field__label" for="equipmentSelect">Equipment</label>
+                <select class="select" id="equipmentSelect" name="equipment">
+                    <option value="">All equipment</option>
+                </select>
+            </div>
+
+            <div class="field">
+                <label class="field__label" for="difficultySelect">Difficulty</label>
+                <select class="select" id="difficultySelect" name="difficulty">
+                    <option value="">Any difficulty</option>
+                </select>
+            </div>
+
+            <div class="field">
+                <label class="field__label" for="typeSelect">Type</label>
+                <select class="select" id="typeSelect" name="type">
+                    <option value="">Any type</option>
+                </select>
+            </div>
+
+            <div class="field">
+                <label class="field__label" for="sortSelect">Sort by</label>
+                <select class="select" id="sortSelect" name="sort">
+                    <option value="name">Exercise name</option>
+                    <option value="muscle">Muscle group</option>
+                </select>
+            </div>
+
+            <div class="filter-bar__actions">
+                <button type="button" class="btn btn--ghost btn--sm" id="clearFilters">
+                    <span>Clear</span>
+                </button>
+            </div>
+
+        </form>
+
+        <p class="text-muted exercise-count" id="resultCount" aria-live="polite"></p>
+
+        <div id="exerciseGrid" class="exercise-grid"></div>
+
+        <div class="load-more" id="loadMoreWrap" hidden>
+            <button type="button" class="btn btn--secondary" id="loadMoreBtn">
+                <span>Load more</span>
+            </button>
+        </div>
+
+    </main>
+
+    <footer id="siteFooter" class="footer"></footer>
+
+    <script src="js/api.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/motion.js"></script>
+    <script src="js/components/shell.js"></script>
+    <script src="js/exercises.js"></script>
+
+</body>
+</html>

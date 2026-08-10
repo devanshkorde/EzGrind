@@ -1,0 +1,1737 @@
+/* ============================================================
+   COMPONENTS
+   Reusable pieces. Every interactive component defines its
+   default / hover / focus-visible / active / disabled states.
+   ============================================================ */
+
+/* ============================================================
+   BUTTON
+   ============================================================ */
+
+.btn {
+    position: relative;          /* anchors the loading spinner */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-6);
+    border: 1px solid transparent;
+    border-radius: var(--radius-full);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-semibold);
+    line-height: 1;
+    letter-spacing: var(--tracking-normal);
+    text-align: center;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background var(--dur-fast) var(--ease-out),
+                border-color var(--dur-fast) var(--ease-out),
+                color var(--dur-fast) var(--ease-out),
+                transform var(--dur-fast) var(--ease-out),
+                box-shadow var(--dur-fast) var(--ease-out);
+}
+
+@media (hover: hover) {
+    .btn:hover {
+        transform: translateY(-1px);
+    }
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+.btn:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+}
+
+.btn:disabled,
+.btn[aria-disabled="true"] {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* --- Variants --- */
+
+.btn--primary {
+    background: linear-gradient(135deg, var(--gold), var(--gold-2));
+    color: var(--text-on-gold);
+    box-shadow: var(--shadow-sm);
+}
+
+@media (hover: hover) {
+    .btn--primary:hover:not(:disabled) {
+        box-shadow: var(--shadow-gold);
+    }
+}
+
+.btn--secondary {
+    background: var(--surface);
+    border-color: var(--border-strong);
+    color: var(--text);
+}
+
+@media (hover: hover) {
+    .btn--secondary:hover:not(:disabled) {
+        background: var(--surface-hover);
+        border-color: var(--gold);
+        color: var(--gold);
+    }
+}
+
+.btn--ghost {
+    background: transparent;
+    color: var(--text-muted);
+}
+
+@media (hover: hover) {
+    .btn--ghost:hover:not(:disabled) {
+        background: var(--surface);
+        color: var(--text);
+    }
+}
+
+/* --danger-strong, not --danger: white on --danger is only 3.6:1. */
+.btn--danger {
+    background: var(--danger-strong);
+    color: var(--text);
+}
+
+@media (hover: hover) {
+    .btn--danger:hover:not(:disabled) {
+        background: var(--danger-strong);
+        box-shadow: var(--shadow-md);
+        filter: brightness(1.1);
+    }
+}
+
+/* --- Sizes --- */
+
+.btn--sm {
+    padding: var(--space-2) var(--space-4);
+    font-size: var(--text-xs);
+}
+
+.btn--lg {
+    padding: var(--space-4) var(--space-8);
+    font-size: var(--text-lg);
+}
+
+.btn--block {
+    display: flex;
+    width: 100%;
+}
+
+/* --- Loading -----------------------------------------------
+   The label keeps its box and only loses visibility, so the
+   button cannot change width mid-request and shift the layout. */
+
+.btn.is-loading {
+    pointer-events: none;
+    color: transparent;
+}
+
+.btn.is-loading > * {
+    visibility: hidden;
+}
+
+.btn.is-loading::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    width: 1em;
+    height: 1em;
+    border: 2px solid currentColor;
+    border-top-color: transparent;
+    border-radius: var(--radius-full);
+    animation: spin var(--dur-slow) linear infinite;
+    visibility: visible;
+}
+
+.btn--primary.is-loading::after {
+    border-color: var(--text-on-gold);
+    border-top-color: transparent;
+}
+
+.btn--secondary.is-loading::after,
+.btn--ghost.is-loading::after {
+    border-color: var(--gold);
+    border-top-color: transparent;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+
+/* ============================================================
+   CARD
+   ============================================================ */
+
+.card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-md);
+    padding: var(--space-7);
+}
+
+.card__header {
+    margin-bottom: var(--space-6);
+}
+
+.card__title {
+    font-size: var(--text-xl);
+    font-weight: var(--weight-semibold);
+}
+
+.card__footer {
+    margin-top: var(--space-6);
+    padding-top: var(--space-5);
+    border-top: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: var(--text-sm);
+}
+
+/* Destructive actions. The border does the signalling so the card reads as
+   dangerous before anything is clicked. */
+.card--danger {
+    border-color: var(--danger);
+    background: var(--surface);
+}
+
+.card--danger .card__title {
+    color: var(--danger);
+}
+
+.card--interactive {
+    transition: border-color var(--dur-base) var(--ease-out),
+                transform var(--dur-base) var(--ease-out),
+                box-shadow var(--dur-base) var(--ease-out);
+}
+
+@media (hover: hover) {
+    .card--interactive:hover {
+        border-color: var(--border-strong);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+    }
+}
+
+
+/* ============================================================
+   FORM
+   ============================================================ */
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    margin-bottom: var(--space-5);
+}
+
+.field__label {
+    font-size: var(--text-sm);
+    font-weight: var(--weight-medium);
+    color: var(--text-muted);
+}
+
+.field__hint {
+    font-size: var(--text-xs);
+    color: var(--text-faint);
+}
+
+.input,
+.select,
+.textarea {
+    width: 100%;
+    padding: var(--space-3) var(--space-4);
+    background: var(--surface-sunken);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    font-size: var(--text-base);
+    transition: border-color var(--dur-fast) var(--ease-out),
+                background var(--dur-fast) var(--ease-out);
+}
+
+.input::placeholder,
+.textarea::placeholder {
+    color: var(--text-faint);
+}
+
+@media (hover: hover) {
+    .input:hover:not(:disabled),
+    .select:hover:not(:disabled),
+    .textarea:hover:not(:disabled) {
+        border-color: var(--border-strong);
+    }
+}
+
+.input:focus-visible,
+.select:focus-visible,
+.textarea:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+    border-color: var(--gold);
+    background: var(--bg-2);
+}
+
+.input:disabled,
+.select:disabled,
+.textarea:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.textarea {
+    min-height: 7rem;
+    resize: vertical;
+}
+
+.select {
+    appearance: none;
+    padding-right: var(--space-9);
+    /* Chevron drawn in CSS so the control needs no image request. */
+    background-image:
+        linear-gradient(45deg, transparent 50%, var(--text-muted) 50%),
+        linear-gradient(135deg, var(--text-muted) 50%, transparent 50%);
+    background-position:
+        calc(100% - 21px) calc(50% + 2px),
+        calc(100% - 16px) calc(50% + 2px);
+    background-size: 5px 5px, 5px 5px;
+    background-repeat: no-repeat;
+    cursor: pointer;
+}
+
+.input[aria-invalid="true"],
+.select[aria-invalid="true"],
+.textarea[aria-invalid="true"] {
+    border-color: var(--danger);
+}
+
+.form-error {
+    font-size: var(--text-xs);
+    color: var(--danger);
+}
+
+/* Removed from flow entirely when empty, so eight fields do not each
+   reserve a blank line of dead space. */
+.form-error:empty {
+    display: none;
+}
+
+
+/* --- Input with a trailing action (password reveal) --------- */
+
+.input-wrap {
+    position: relative;
+    display: flex;
+}
+
+.input-wrap .input {
+    padding-right: var(--space-12);
+}
+
+.input__action {
+    position: absolute;
+    top: 50%;
+    right: var(--space-2);
+    transform: translateY(-50%);
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-sm);
+    color: var(--text-muted);
+    font-size: var(--text-xs);
+    font-weight: var(--weight-semibold);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    transition: color var(--dur-fast) var(--ease-out),
+                background var(--dur-fast) var(--ease-out);
+}
+
+@media (hover: hover) {
+    .input__action:hover {
+        background: var(--surface-hover);
+        color: var(--gold);
+    }
+}
+
+.input__action:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 1px;
+}
+
+
+/* --- Stepper ------------------------------------------------ */
+/* Big targets either side of the number: on a phone mid-set, tapping
+   a 44px button beats selecting text in a field. */
+
+.stepper {
+    display: flex;
+    align-items: stretch;
+    gap: var(--space-2);
+}
+
+.stepper__btn {
+    flex: none;
+    width: 3rem;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    color: var(--text);
+    font-size: var(--text-xl);
+    line-height: 1;
+    transition: background var(--dur-fast) var(--ease-out),
+                border-color var(--dur-fast) var(--ease-out),
+                color var(--dur-fast) var(--ease-out);
+}
+
+@media (hover: hover) {
+    .stepper__btn:hover {
+        background: var(--surface-hover);
+        border-color: var(--gold);
+        color: var(--gold);
+    }
+}
+
+.stepper__btn:active {
+    transform: scale(0.96);
+}
+
+.stepper__btn:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+}
+
+.stepper__input {
+    text-align: center;
+    font-size: var(--text-2xl);
+    font-weight: var(--weight-semibold);
+    font-variant-numeric: tabular-nums;
+    /* Spinners duplicate the buttons and shrink the tap target. */
+    appearance: textfield;
+    -moz-appearance: textfield;
+}
+
+.stepper__input::-webkit-outer-spin-button,
+.stepper__input::-webkit-inner-spin-button {
+    appearance: none;
+    margin: 0;
+}
+
+
+/* --- Option list -------------------------------------------- */
+
+.option-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    max-height: 22rem;
+    overflow-y: auto;
+}
+
+.option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    width: 100%;
+    padding: var(--space-3) var(--space-4);
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    text-align: left;
+    transition: background var(--dur-fast) var(--ease-out),
+                border-color var(--dur-fast) var(--ease-out);
+}
+
+@media (hover: hover) {
+    .option:hover {
+        background: var(--surface-hover);
+        border-color: var(--border-strong);
+    }
+}
+
+.option:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+}
+
+.option.is-selected {
+    border-color: var(--gold);
+    background: var(--gold-dim);
+}
+
+.option__name {
+    font-weight: var(--weight-medium);
+}
+
+/* Separates "Recent" from "All exercises" in the picker. A <p>, not a heading:
+   it labels a run of options inside a list, and inserting an h3 here would put
+   a rung in the page outline that the section does not deserve. */
+.option-list__heading {
+    margin-top: var(--space-2);
+    color: var(--text-muted);
+    font-size: var(--text-xs);
+    font-weight: var(--weight-medium);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.option-list__heading:first-child {
+    margin-top: 0;
+}
+
+.option-list__more {
+    align-self: center;
+    margin-top: var(--space-2);
+}
+
+
+/* --- Password strength ------------------------------------- */
+/* Guidance, not a gate. The only enforced rule is the server's
+   minimum length; this just tells the user where they stand. */
+
+.strength-meter {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.strength-meter__track {
+    display: flex;
+    gap: var(--space-1);
+}
+
+.strength-meter__segment {
+    flex: 1;
+    height: 4px;
+    border-radius: var(--radius-full);
+    background: var(--border);
+    transition: background var(--dur-base) var(--ease-out);
+}
+
+.strength-meter[data-score="1"] .strength-meter__segment:nth-child(-n + 1),
+.strength-meter[data-score="2"] .strength-meter__segment:nth-child(-n + 2),
+.strength-meter[data-score="3"] .strength-meter__segment:nth-child(-n + 3),
+.strength-meter[data-score="4"] .strength-meter__segment:nth-child(-n + 4) {
+    background: var(--warning);
+}
+
+.strength-meter[data-score="3"] .strength-meter__segment:nth-child(-n + 3),
+.strength-meter[data-score="4"] .strength-meter__segment:nth-child(-n + 4) {
+    background: var(--success);
+}
+
+.strength-meter__label {
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+}
+
+
+/* --- Password requirements ---------------------------------- */
+/* A live checklist, not an error after submit. Shared by signup,
+   reset and change-password, so the same rules look the same
+   everywhere. Built only from existing tokens. */
+
+.requirements {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-1) var(--space-4);
+    margin: var(--space-2) 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.requirements__item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+    transition: color var(--dur-fast) var(--ease-out);
+}
+
+/* One box for both states, so nothing shifts when a rule is met -
+   the dot becomes a tick in place. */
+.requirements__mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1rem;
+    height: 1rem;
+    flex: none;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--border-strong);
+    color: transparent;
+    font-size: 0.625rem;
+    line-height: 1;
+    transition: border-color var(--dur-fast) var(--ease-out),
+                color var(--dur-fast) var(--ease-out);
+}
+
+.requirements__item.is-met {
+    color: var(--text);
+}
+
+.requirements__item.is-met .requirements__mark {
+    border-color: var(--gold);
+    color: var(--gold);
+}
+
+/* A secondary link sitting under a field - "Forgot password?" beneath the
+   password input. Right-aligned so it reads as an escape hatch rather than
+   part of the label. */
+.field__aside {
+    margin: var(--space-2) 0 0;
+    font-size: var(--text-sm);
+    text-align: right;
+}
+
+@media (max-width: 26rem) {
+    .requirements {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+/* --- Form section ------------------------------------------ */
+/* Nine inputs in one column reads as a wall. Grouping them into
+   named sections makes the form look shorter than it is. */
+
+.form-section {
+    border: none;
+    padding: 0;
+    margin: 0 0 var(--space-7);
+}
+
+.form-section + .form-section {
+    padding-top: var(--space-7);
+    border-top: 1px solid var(--border);
+}
+
+.form-section__title {
+    display: block;
+    padding: 0;
+    margin-bottom: var(--space-5);
+    font-size: var(--text-xs);
+    font-weight: var(--weight-semibold);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--gold);
+}
+
+
+/* ============================================================
+   TABLE
+   ============================================================ */
+
+.table-wrap {
+    overflow-x: auto;            /* wide tables scroll, the page never does */
+    max-height: 70vh;
+    max-height: 70dvh;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+}
+
+.table {
+    font-size: var(--text-sm);
+}
+
+.table th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    padding: var(--space-3) var(--space-4);
+    background: var(--bg-2);
+    border-bottom: 1px solid var(--border-strong);
+    font-size: var(--text-xs);
+    font-weight: var(--weight-semibold);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--text-muted);
+    text-align: left;
+    white-space: nowrap;
+}
+
+/* Separation by rule, not by zebra fill: stripes fight a dark
+   surface and make every other row look disabled. */
+.table td {
+    padding: var(--space-4);
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+}
+
+.table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.table tbody tr {
+    transition: background var(--dur-fast) var(--ease-out);
+}
+
+@media (hover: hover) {
+    .table tbody tr:hover {
+        background: var(--surface-hover);
+    }
+}
+
+.table__numeric {
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+}
+
+
+/* ============================================================
+   SET TABLE  (.table--sets)
+   ============================================================
+   Alignment is declared per COLUMN, matching th and td in the same
+   rule, so a header and its cells cannot drift apart.
+
+   That drift is what was wrong: `.table th { text-align: left }` is
+   specificity (0,1,1) and `.table__numeric` is (0,1,0), so the headers
+   kept left alignment while their cells went right. The class was on
+   the headers the whole time - it simply never won. Selecting on
+   `.table--sets th:nth-child(n)` is (0,2,1), which does.
+*/
+
+.table--sets {
+    /* Widths come from the colgroup, not from whatever the longest note
+       happens to be. Without this, Notes ate the row and pushed the
+       numeric columns wide enough to strand each value from its header. */
+    table-layout: fixed;
+    width: 100%;
+}
+
+/* SET - left */
+.table--sets th:nth-child(1),
+.table--sets td:nth-child(1) {
+    text-align: left;
+}
+
+/* WEIGHT, REPS, EST. 1RM - right, with room off the edge */
+.table--sets th:nth-child(2),
+.table--sets td:nth-child(2),
+.table--sets th:nth-child(3),
+.table--sets td:nth-child(3),
+.table--sets th:nth-child(4),
+.table--sets td:nth-child(4) {
+    text-align: right;
+    padding-right: 24px;
+    /* On the header too: it costs nothing and means one rule describes
+       the column completely. */
+    font-variant-numeric: tabular-nums;
+}
+
+/* NOTES - left */
+.table--sets th:nth-child(5),
+.table--sets td:nth-child(5) {
+    text-align: left;
+}
+
+/* Notes can be long and fixed layout will not widen for them. */
+.table--sets td:nth-child(5) {
+    overflow-wrap: break-word;
+}
+
+/* The unit recedes so the eye tracks the digits down the column. */
+.table__unit {
+    margin-left: 0.15em;
+    color: var(--text-muted);
+    font-size: 0.85em;
+}
+
+/* "Nothing recorded" is not data and should not read as data. */
+.table__empty {
+    color: var(--text-muted);
+}
+
+
+/* --- Stacked cards below 600px ------------------------------
+   A five-column table cannot be read on a 360px screen, and the
+   brief is explicit that it must not scroll sideways. Rather than
+   render different markup, the same DOM is re-laid-out with grid:
+   one source of truth, no resize listener, and it reflows live on
+   rotation. Column labels come back as ::before from data-label. */
+
+@media (max-width: 600px) {
+
+    .table-wrap:has(.table--sets) {
+        /* Nothing to scroll once stacked, and a nested scroll area on a
+           phone traps the page scroll. */
+        overflow-x: visible;
+        max-height: none;
+    }
+
+    .table--sets,
+    .table--sets tbody,
+    .table--sets tr,
+    .table--sets td {
+        display: block;
+    }
+
+    .table--sets colgroup {
+        display: none;
+    }
+
+    /* Headers are gone visually but stay in the accessibility tree. */
+    .table--sets thead {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+    }
+
+    .table--sets tr {
+        display: grid;
+        grid-template-columns: 2.25rem auto 1fr;
+        align-items: center;
+        gap: var(--space-1) var(--space-3);
+        padding: var(--space-4);
+        border-bottom: 1px solid var(--border);
+    }
+
+    .table--sets tbody tr:last-child {
+        border-bottom: none;
+    }
+
+    /* Column alignment is meaningless once the columns are gone. */
+    .table--sets td {
+        padding: 0;
+        text-align: left;
+        border: none;
+    }
+
+    /* set number | weight × reps
+       set number | est. 1RM
+       notes, full width                                     */
+    .table--sets td:nth-child(1) {
+        grid-area: 1 / 1 / 3 / 2;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 1.75rem;
+        height: 1.75rem;
+        border-radius: var(--radius-full);
+        background: var(--bg-2);
+        color: var(--text-muted);
+        font-size: var(--text-xs);
+        font-weight: var(--weight-bold);
+        font-variant-numeric: tabular-nums;
+    }
+
+    .table--sets td:nth-child(2) { grid-area: 1 / 2 / 2 / 3; }
+    .table--sets td:nth-child(3) { grid-area: 1 / 3 / 2 / 4; }
+    .table--sets td:nth-child(4) { grid-area: 2 / 2 / 3 / 4; }
+    .table--sets td:nth-child(5) { grid-area: 3 / 1 / 4 / 4; }
+
+    /* Reads as "60 kg × 8" across two cells. */
+    .table--sets td:nth-child(2)::after {
+        content: " ×";
+        color: var(--text-muted);
+    }
+
+    .table--sets td:nth-child(2),
+    .table--sets td:nth-child(3) {
+        font-size: var(--text-base);
+        font-weight: var(--weight-semibold);
+    }
+
+    .table--sets td[data-label]::before {
+        content: attr(data-label) " ";
+        color: var(--text-muted);
+        font-size: var(--text-xs);
+        font-weight: var(--weight-semibold);
+        letter-spacing: var(--tracking-wide);
+        text-transform: uppercase;
+    }
+
+    .table--sets td:nth-child(4),
+    .table--sets td:nth-child(5) {
+        font-size: var(--text-sm);
+    }
+}
+
+
+/* ============================================================
+   BADGE
+   ============================================================ */
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    padding: var(--space-1) var(--space-3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-full);
+    background: var(--bg-2);
+    color: var(--text-muted);
+    font-size: var(--text-xs);
+    font-weight: var(--weight-medium);
+    letter-spacing: var(--tracking-normal);
+    white-space: nowrap;
+}
+
+.badge--gold {
+    background: var(--gold-dim);
+    border-color: var(--gold-ring);
+    color: var(--gold);
+}
+
+.badge--success {
+    background: var(--success-dim);
+    border-color: transparent;
+    color: var(--success);
+}
+
+.badge--danger {
+    background: var(--danger-dim);
+    border-color: transparent;
+    color: var(--danger);
+}
+
+.badge--warning {
+    background: var(--warning-dim);
+    border-color: transparent;
+    color: var(--warning);
+}
+
+
+/* ============================================================
+   STAT CARD
+   ============================================================ */
+
+.stat-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding: var(--space-6);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+}
+
+.stat-card__label {
+    font-size: var(--text-xs);
+    font-weight: var(--weight-semibold);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+.stat-card__value {
+    font-family: var(--font-display);
+    font-size: var(--text-3xl);
+    font-weight: var(--weight-bold);
+    line-height: var(--leading-tight);
+    letter-spacing: var(--tracking-tighter);
+    font-variant-numeric: tabular-nums;
+    color: var(--text);
+}
+
+.stat-card__meta {
+    min-height: var(--text-sm);   /* reserved, so a card with no trend matches one that has */
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+}
+
+.stat-card__meta--up { color: var(--success); }
+.stat-card__meta--down { color: var(--warning); }
+
+
+/* ============================================================
+   STAGGER
+   Cards enter in sequence rather than all at once, which makes a
+   grid read as a list instead of a flash.
+   ============================================================ */
+
+.stagger > * {
+    animation: rise var(--dur-slow) var(--ease-out) both;
+}
+
+.stagger > *:nth-child(1) { animation-delay: 0ms; }
+.stagger > *:nth-child(2) { animation-delay: 60ms; }
+.stagger > *:nth-child(3) { animation-delay: 120ms; }
+.stagger > *:nth-child(4) { animation-delay: 180ms; }
+.stagger > *:nth-child(5) { animation-delay: 240ms; }
+.stagger > *:nth-child(6) { animation-delay: 300ms; }
+.stagger > *:nth-child(7) { animation-delay: 360ms; }
+.stagger > *:nth-child(8) { animation-delay: 420ms; }
+
+@keyframes rise {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: none; }
+}
+
+/* Motion off means no transform at all - not a faster transform. */
+@media (prefers-reduced-motion: reduce) {
+    .stagger > * {
+        animation: none;
+        opacity: 1;
+        transform: none;
+    }
+}
+
+
+/* ============================================================
+   SKELETON
+   ============================================================ */
+
+.skeleton {
+    position: relative;
+    overflow: hidden;
+    background: var(--surface);
+    border-radius: var(--radius-sm);
+    min-height: 1rem;
+}
+
+.skeleton::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(
+        90deg,
+        transparent,
+        var(--border),
+        transparent
+    );
+    animation: skeleton-sweep 1.4s ease-in-out infinite;
+}
+
+.skeleton--text {
+    height: 0.875rem;
+    margin-bottom: var(--space-2);
+}
+
+.skeleton--title {
+    height: 1.5rem;
+    width: 40%;
+    margin-bottom: var(--space-4);
+}
+
+/* Sized to a .stat-card's three lines, so the placeholder occupies exactly
+   the height the real numbers will. */
+.skeleton--label { height: var(--text-xs); width: 55%; }
+.skeleton--value { height: var(--text-3xl); width: 70%; }
+.skeleton--meta  { height: var(--text-sm); width: 40%; }
+
+/* Holds a chart's height so the content below it does not jump up while the
+   series loads and then get pushed back down. */
+.skeleton--chart {
+    height: 200px;
+    border-radius: var(--radius-sm);
+}
+
+@keyframes skeleton-sweep {
+    to { transform: translateX(100%); }
+}
+
+
+/* ============================================================
+   EMPTY STATE
+   ============================================================ */
+
+/* Was --space-10 (64px) top and bottom, which pushed an icon, a heading, one
+   line and a button past 400px and left a void beside whatever card sat next
+   to it. --space-6 plus a 15rem floor lands the whole block at roughly 240px:
+   tall enough to look deliberate, short enough not to distort a row.
+
+   flex: 1 lets it fill a stretched card, and centring means the extra height
+   reads as breathing room rather than padding underneath the content. */
+.empty-state {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-3);
+    min-height: 15rem;
+    padding: var(--space-6);
+    text-align: center;
+}
+
+.empty-state__icon {
+    font-size: var(--text-4xl);
+    line-height: 1;
+    opacity: 0.6;
+}
+
+.empty-state__title {
+    font-size: var(--text-xl);
+    font-weight: var(--weight-semibold);
+    color: var(--text);
+}
+
+.empty-state__body {
+    max-width: 42ch;
+    color: var(--text-muted);
+}
+
+.empty-state__action {
+    margin-top: var(--space-2);
+}
+
+/* An error is not the same event as an empty list, so it does not look the
+   same. Tinted icon only - the headline and body carry the meaning. */
+.empty-state--error .empty-state__icon {
+    opacity: 1;
+}
+
+.empty-state--error .empty-state__title {
+    color: var(--warning);
+}
+
+
+/* ============================================================
+   SKELETON ROW
+   A placeholder shaped like the content that replaces it.
+   ============================================================ */
+
+.skeleton-row {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    margin-bottom: var(--space-3);
+}
+
+.skeleton-row:last-child {
+    margin-bottom: 0;
+}
+
+
+/* ============================================================
+   OFFLINE BANNER
+   Persistent, not a toast: offline is a state that lasts, and a
+   message that auto-dismissed after 4s would claim it had passed.
+   ============================================================ */
+
+.offline-banner {
+    position: fixed;
+    top: 0;
+    inset-inline: 0;
+    z-index: var(--z-toast);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.5rem;
+    padding: var(--space-2) var(--space-5);
+    background: var(--warning);
+    color: var(--text-on-gold);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-semibold);
+    text-align: center;
+}
+
+/* Pushes the page down so the fixed banner cannot cover the nav. Applied to
+   the root element rather than body, which is a flex column here. */
+.is-offline {
+    padding-top: 2.5rem;
+}
+
+
+/* ============================================================
+   DIALOG
+   Native <dialog>: the browser owns the focus trap, Escape and
+   focus restoration, so none of that is styled or scripted here.
+   ============================================================ */
+
+.dialog {
+    padding: 0;
+    border: none;
+    background: none;
+    max-width: min(100% - var(--space-8), 40rem);
+    max-height: calc(100vh - var(--space-8));
+    max-height: calc(100dvh - var(--space-8));
+    color: var(--text);
+    overflow: visible;
+}
+
+.dialog::backdrop {
+    background: rgba(0, 0, 0, 0.72);
+    backdrop-filter: blur(2px);
+}
+
+.modal__panel {
+    width: 100%;
+    max-width: 26rem;
+    padding: var(--space-8);
+    background: var(--surface);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg);
+    text-align: center;
+    animation: modal-in var(--dur-base) var(--ease-out);
+}
+
+/* Wider, left-aligned variant for content rather than a question. */
+.modal__panel--wide {
+    position: relative;          /* anchors .dialog__close */
+    max-width: 34rem;
+    max-height: calc(100vh - var(--space-8));
+    max-height: calc(100dvh - var(--space-8));
+    overflow-y: auto;
+    text-align: left;
+}
+
+/* Below this a centred card wastes the screen; every dialog becomes a sheet
+   filling the viewport, which is what a phone wants. */
+@media (max-width: 600px) {
+    .dialog {
+        max-width: 100%;
+        max-height: 100%;
+        width: 100vw;
+        height: 100vh;
+        height: 100dvh;
+    }
+
+    .modal__panel,
+    .modal__panel--wide {
+        max-width: none;
+        height: 100%;
+        max-height: none;
+        border: none;
+        border-radius: 0;
+        /* A sheet is scrolled, so its actions must not be stranded off-screen. */
+        overflow-y: auto;
+    }
+}
+
+.dialog__close {
+    position: absolute;
+    top: var(--space-4);
+    right: var(--space-4);
+    width: 2rem;
+    height: 2rem;
+    border-radius: var(--radius-full);
+    color: var(--text-muted);
+    font-size: var(--text-xl);
+    line-height: 1;
+    transition: background var(--dur-fast) var(--ease-out),
+                color var(--dur-fast) var(--ease-out);
+}
+
+@media (hover: hover) {
+    .dialog__close:hover {
+        background: var(--surface-hover);
+        color: var(--text);
+    }
+}
+
+.dialog__close:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+}
+
+.modal__title {
+    font-size: var(--text-xl);
+    font-weight: var(--weight-semibold);
+    margin-bottom: var(--space-2);
+}
+
+.modal__body {
+    color: var(--text-muted);
+    margin-bottom: var(--space-6);
+}
+
+.modal__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    justify-content: center;
+}
+
+@keyframes modal-in {
+    from { opacity: 0; transform: translateY(8px) scale(0.98); }
+    to   { opacity: 1; transform: none; }
+}
+
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+
+.toast-region {
+    position: fixed;
+    right: var(--space-6);
+    bottom: var(--space-6);
+    z-index: var(--z-toast);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    max-width: min(24rem, calc(100vw - var(--space-8)));
+    pointer-events: none;
+}
+
+.toast {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding: var(--space-4) var(--space-5);
+    background: var(--surface);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-lg);
+    font-size: var(--text-sm);
+    pointer-events: auto;
+    animation: toast-in var(--dur-base) var(--ease-out);
+}
+
+.toast.is-leaving {
+    animation: toast-out var(--dur-base) var(--ease-out) forwards;
+}
+
+/* Status reads from a small dot rather than a thick edge stripe: same
+   glanceable meaning, without the border dominating the component. */
+.toast::before {
+    content: "";
+    flex: none;
+    width: 8px;
+    height: 8px;
+    margin-top: 0.45em;          /* optically centred on the first line */
+    border-radius: var(--radius-full);
+    background: var(--text-muted);
+}
+
+.toast--success::before { background: var(--success); }
+.toast--error::before   { background: var(--danger); }
+.toast--warning::before { background: var(--warning); }
+.toast--info::before    { background: var(--gold); }
+
+.toast__message {
+    flex: 1;
+}
+
+.toast__close {
+    color: var(--text-faint);
+    font-size: var(--text-lg);
+    line-height: 1;
+    padding: 0 var(--space-1);
+    transition: color var(--dur-fast) var(--ease-out);
+}
+
+@media (hover: hover) {
+    .toast__close:hover {
+        color: var(--text);
+    }
+}
+
+@keyframes toast-in {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: none; }
+}
+
+/* Used where the region is pinned to the top, so the toast still enters from
+   off-screen rather than rising up past the content. */
+@keyframes toast-in-top {
+    from { opacity: 0; transform: translateY(-12px); }
+    to   { opacity: 1; transform: none; }
+}
+
+@keyframes toast-out {
+    to { opacity: 0; transform: translateY(12px); }
+}
+
+
+/* ============================================================
+   CHART  (built by js/charts.js)
+   ============================================================ */
+
+.chart {
+    position: relative;
+}
+
+.chart__svg {
+    display: block;
+    width: 100%;
+    height: auto;              /* viewBox includes the x-axis band */
+    overflow: visible;
+}
+
+.chart__svg:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 4px;
+}
+
+/* Solid hairlines. Dashed grid reads as a threshold when it is just a grid. */
+.chart__grid {
+    stroke: var(--border);
+    stroke-width: 1;
+}
+
+.chart__tick {
+    fill: var(--text-faint);
+    font-size: 11px;
+    font-variant-numeric: tabular-nums;   /* ticks align vertically */
+}
+
+.chart__area {
+    fill: url(#volumeFill);
+}
+
+.chart__line {
+    fill: none;
+    stroke: var(--gold);
+    stroke-width: 2;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+}
+
+.chart__endpoint {
+    fill: var(--gold);
+    stroke: var(--surface);      /* 2px surface ring, not a border */
+    stroke-width: 2;
+}
+
+/* The one direct label. A number on every point is unreadable. */
+.chart__endlabel {
+    fill: var(--text-muted);
+    font-size: 11px;
+    font-weight: var(--weight-semibold);
+}
+
+.chart__crosshair {
+    stroke: var(--border-strong);
+    stroke-width: 1;
+}
+
+.chart__marker {
+    fill: var(--gold);
+    stroke: var(--surface);
+    stroke-width: 2;
+}
+
+.chart__tooltip {
+    position: absolute;
+    top: 0;
+    transform: translateX(-50%);
+    padding: var(--space-2) var(--space-3);
+    background: var(--bg-2);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-md);
+    /* Text wears text tokens; the mark carries the identity. */
+    color: var(--text);
+    font-size: var(--text-xs);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    pointer-events: none;
+}
+
+.chart__empty {
+    padding: var(--space-9) var(--space-4);
+    color: var(--text-muted);
+    text-align: center;
+}
+
+
+/* --- Horizontal bars ---------------------------------------- */
+/* One flat gold for every bar. The length carries the value; a ramp
+   would say it twice, and muscle groups have no order to ramp along. */
+
+.bar__label {
+    fill: var(--text);
+    font-size: 13px;
+}
+
+.bar__value {
+    fill: var(--text-muted);
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+}
+
+.bar__track {
+    fill: var(--bg-2);
+}
+
+.bar__fill {
+    fill: var(--gold);
+    opacity: 0.85;
+}
+
+
+/* --- Sortable table header ---------------------------------- */
+
+.table__sort {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    padding: 0;
+    color: inherit;
+    font: inherit;
+    letter-spacing: inherit;
+    text-transform: inherit;
+}
+
+.table__sort::after {
+    content: "";
+    width: 0;
+    height: 0;
+    border-inline: 4px solid transparent;
+    border-top: 5px solid currentColor;
+    opacity: 0;
+    transition: opacity var(--dur-fast) var(--ease-out);
+}
+
+[aria-sort="descending"] .table__sort::after { opacity: 0.7; }
+
+[aria-sort="ascending"] .table__sort::after {
+    opacity: 0.7;
+    transform: rotate(180deg);
+}
+
+.table__sort:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+}
+
+@media (hover: hover) {
+    .table__sort:hover {
+        color: var(--gold);
+    }
+}
+
+
+/* --- Inline select (sits in a card header) ------------------- */
+
+.select--inline {
+    width: auto;
+    padding-block: var(--space-2);
+    font-size: var(--text-sm);
+}
+
+
+/* ============================================================
+   FILTER BAR
+   One row above everything it scopes - never inside a chart card.
+   ============================================================ */
+
+.filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: var(--space-4);
+    padding: var(--space-5);
+    margin-bottom: var(--space-6);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+}
+
+.filter-bar .field {
+    flex: 1 1 10rem;
+    margin-bottom: 0;
+}
+
+.filter-bar__actions {
+    display: flex;
+    gap: var(--space-2);
+}
+
+/* Sticky variant: the controls stay reachable while scrolling a long grid. */
+.filter-bar--sticky {
+    position: sticky;
+    top: var(--nav-height);
+    z-index: calc(var(--z-nav) - 1);
+}
+
+.filter-bar__row {
+    flex: 1 1 100%;
+}
+
+
+/* --- Chips (multi-select) ----------------------------------- */
+
+.chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+}
+
+.chip {
+    padding: var(--space-2) var(--space-4);
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-full);
+    color: var(--text-muted);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-medium);
+    transition: background var(--dur-fast) var(--ease-out),
+                border-color var(--dur-fast) var(--ease-out),
+                color var(--dur-fast) var(--ease-out);
+}
+
+@media (hover: hover) {
+    .chip:hover {
+        background: var(--surface-hover);
+        color: var(--text);
+    }
+}
+
+.chip:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+}
+
+/* aria-pressed carries the state; the styling follows it rather than a
+   separate class, so the two cannot disagree. */
+.chip[aria-pressed="true"] {
+    background: var(--gold-dim);
+    border-color: var(--gold);
+    color: var(--gold);
+}
+
+
+/* --- Refetching ---------------------------------------------
+   Dim the existing render rather than replacing it with skeletons:
+   no layout jump, and the reader keeps their place. */
+
+.is-refetching {
+    opacity: 0.45;
+    pointer-events: none;
+    transition: opacity var(--dur-fast) var(--ease-out);
+}
+
+
+/* ============================================================
+   TOUCH TARGETS
+   44px minimum on anything tappable.
+
+   Gated on a coarse pointer OR a narrow viewport rather than applied
+   globally: desktop density stays exactly as designed, and a touch
+   laptop gets the larger targets even at 1400px. This is a reach fix,
+   not a redesign.
+
+   Measured before writing: .btn was 40px, .btn--sm 30px, .chip 38px,
+   .nav__link 38px, .input__action ~35px, .dialog__close 32px,
+   .session-row__delete 28px, .toast__close ~29px. All under.
+   ============================================================ */
+
+@media (max-width: 600px), (pointer: coarse) {
+
+    .btn,
+    .btn--sm,
+    .nav__link,
+    .chip,
+    .option,
+    .input,
+    .select {
+        min-height: 44px;
+    }
+
+    /* Square icon buttons need both axes - a 44x28 target still misses. */
+    .input__action,
+    .dialog__close,
+    .toast__close,
+    .session-row__delete,
+    .stepper__btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 44px;
+        min-height: 44px;
+    }
+
+    /* The close button grew, so the header it overlaps needs more clearance. */
+    .detail__header {
+        padding-right: calc(var(--space-4) + 44px);
+    }
+
+    /* A box around this would read as a button it is not; grow the tap area
+       with vertical padding instead. */
+    .stat-card__prompt {
+        display: inline-block;
+        padding-block: var(--space-3);
+    }
+}
+
+
+/* ============================================================
+   NAV  (markup injected by js/components/shell.js)
+   ============================================================ */
+
+.nav {
+    position: sticky;
+    top: 0;
+    z-index: var(--z-nav);
+    min-height: var(--nav-height);   /* reserved before JS fills it */
+    display: flex;
+    align-items: center;
+    gap: var(--space-6);
+    padding: var(--space-3) var(--space-7);
+    background: var(--bg-2);
+    border-bottom: 1px solid var(--border);
+}
+
+.nav__brand {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3);
+    color: var(--text);
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-tight);
+}
+
+@media (hover: hover) {
+    .nav__brand:hover {
+        color: var(--gold);
+    }
+}
+
+.nav__brand img {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+}
+
+.nav__links {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    margin-left: auto;
+    flex-wrap: wrap;
+}
+
+.nav__link {
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-full);
+    color: var(--text-muted);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-medium);
+    transition: background var(--dur-fast) var(--ease-out),
+                color var(--dur-fast) var(--ease-out);
+}
+
+@media (hover: hover) {
+    .nav__link:hover {
+        background: var(--surface);
+        color: var(--text);
+    }
+}
+
+.nav__link[aria-current="page"] {
+    background: var(--gold-dim);
+    color: var(--gold);
+}
+
+
+/* ============================================================
+   FOOTER  (markup injected by js/components/shell.js)
+   ============================================================ */
+
+.footer {
+    padding: var(--space-8) var(--space-7);
+    border-top: 1px solid var(--border);
+    color: var(--text-faint);
+    font-size: var(--text-sm);
+    text-align: center;
+}

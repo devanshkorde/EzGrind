@@ -1,0 +1,1282 @@
+/* ============================================================
+   PAGES
+   Only what genuinely belongs to one page. Anything that shows
+   up twice belongs in components.css instead.
+   ============================================================ */
+
+/* ============================================================
+   AUTH - brand panel
+   ============================================================ */
+
+.auth-brand {
+    position: relative;
+    overflow: hidden;            /* contains the drifting accent */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: var(--space-8);
+    padding: var(--space-10) var(--space-9);
+    background: linear-gradient(160deg, var(--bg-2), var(--surface-sunken));
+    border-right: 1px solid var(--border);
+}
+
+/* One large, very soft gold glow drifting behind the copy. Slow and
+   low-contrast on purpose: it should register as depth, not motion.
+   base.css disables it under prefers-reduced-motion. */
+.auth-brand::before {
+    content: "";
+    position: absolute;
+    top: -30%;
+    left: -20%;
+    width: 70%;
+    aspect-ratio: 1;
+    border-radius: var(--radius-full);
+    background: radial-gradient(circle, var(--gold-dim), transparent 68%);
+    animation: brand-drift 18s var(--ease-out) infinite alternate;
+    pointer-events: none;
+}
+
+.auth-brand > * {
+    position: relative;          /* above the glow */
+}
+
+.auth-brand__mark {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3);
+    color: var(--text);
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-tight);
+}
+
+.auth-brand__mark img {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+}
+
+.auth-brand__copy {
+    max-width: 22ch;
+    font-family: var(--font-display);
+    font-size: var(--text-3xl);
+    font-weight: var(--weight-bold);
+    line-height: var(--leading-tight);
+    letter-spacing: var(--tracking-tighter);
+}
+
+.auth-brand__copy em {
+    font-style: normal;
+    color: var(--gold);
+}
+
+.auth-brand__footnote {
+    color: var(--text-faint);
+    font-size: var(--text-sm);
+}
+
+@keyframes brand-drift {
+    from { transform: translate3d(0, 0, 0); }
+    to   { transform: translate3d(18%, 22%, 0); }
+}
+
+@media (max-width: 900px) {
+    .auth-brand {
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-start;
+        gap: var(--space-5);
+        padding: var(--space-6) var(--space-5);
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+    }
+
+    /* The long headline is the first thing to go: on a phone the form
+       is what the user came for. */
+    .auth-brand__copy,
+    .auth-brand__footnote {
+        display: none;
+    }
+
+    .auth-brand__mark img {
+        width: 36px;
+        height: 36px;
+    }
+}
+
+
+/* ============================================================
+   LANDING - hero
+   ============================================================ */
+
+.hero {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-10);
+    padding-block: var(--space-11);
+}
+
+.hero__text {
+    max-width: 34rem;
+}
+
+.hero__title {
+    font-size: var(--text-5xl);
+    letter-spacing: var(--tracking-tighter);
+    margin-bottom: var(--space-5);
+}
+
+.hero__body {
+    color: var(--text-muted);
+    font-size: var(--text-lg);
+    margin-bottom: var(--space-7);
+}
+
+/* Solid colour rather than the original padded background box: at
+   hero size that box overlapped the line above it. */
+.hero__title .highlight {
+    color: var(--gold);
+}
+
+.hero__media {
+    position: relative;
+    flex: none;
+}
+
+/* Gold glow sitting behind the product shot. Sized off the image so it
+   reads as light coming from behind the phone, not a circle next to it. */
+.hero__glow {
+    position: absolute;
+    inset: -18%;
+    border-radius: var(--radius-full);
+    background: radial-gradient(circle, var(--gold-dim), transparent 65%);
+    pointer-events: none;
+}
+
+.hero__media img {
+    position: relative;
+    max-height: 26rem;
+    width: auto;
+    filter: drop-shadow(var(--shadow-lg));
+    /* Float rather than scroll parallax: no scroll listener, no layout
+       thrash, and it composites on the GPU. */
+    animation: float 6s ease-in-out infinite alternate;
+}
+
+@keyframes float {
+    from { transform: translateY(-6px); }
+    to   { transform: translateY(6px); }
+}
+
+
+/* ============================================================
+   LANDING - how it works
+   ============================================================ */
+
+.howto {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+/* A fixed height plus object-fit: cover clipped these badly - the three
+   screenshots are portrait (0.71-0.80) and were being forced into a landscape
+   box, losing half the image at 1440px and nearly four fifths at 768px where
+   the grid drops to one column and the box gets wider still.
+
+   aspect-ratio gives all three media boxes an identical height whatever the
+   individual images measure, and `contain` fits the whole image inside rather
+   than filling and cropping. No wrapper element is needed: contain centres the
+   image in its own box by default, and the background shows through the
+   letterbox, so the image element frames itself.
+
+   4/5 is close to what step2 and step3 already are, so only step1 letterboxes
+   noticeably - and against --surface that reads as padding inside the frame. */
+.howto__media {
+    width: 100%;
+    /* Caps the box on a single-column card, where 100% would otherwise be
+       ~660px wide and over 800px tall. */
+    max-width: 20rem;
+    margin-inline: auto;
+    aspect-ratio: 4 / 5;
+    object-fit: contain;
+    background: var(--surface);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    margin-bottom: var(--space-2);
+}
+
+.howto__number {
+    font-family: var(--font-display);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-wide);
+    color: var(--gold);
+}
+
+.howto__title {
+    font-size: var(--text-xl);
+}
+
+
+/* ============================================================
+   LANDING - features
+   ============================================================ */
+
+.feature {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding: var(--space-6);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+}
+
+.feature__icon {
+    width: 28px;
+    height: 28px;
+    color: var(--gold);
+}
+
+.feature__title {
+    font-size: var(--text-lg);
+    font-weight: var(--weight-semibold);
+}
+
+
+/* ============================================================
+   DASHBOARD
+   ============================================================ */
+
+/* ONE grid owns every gap on this page.
+   Before, each section set its own margin and two of them set none at all:
+     .dash__head    margin-bottom: --space-8   (40px)
+     .stat-grid     margin-bottom: --space-9   (48px)
+     .streak-card   margin-bottom: --space-6   (24px, inside a grid cell)
+     grid--2 -> distribution      (nothing, 0px)
+     distribution -> records      (nothing, 0px)
+   Hence 48px in one place and nothing in another. The grid gap replaces all
+   of them, so there is a single number to change. */
+.dash {
+    gap: var(--space-7);
+    /* Paired cards share the row height. This replaces `align-items: start`
+       on the old row wrappers, which is what let the shorter card leave a
+       void beside the taller one. */
+    align-items: stretch;
+}
+
+/* Sections that run the full width span the columns instead of living in
+   their own wrapper, so they sit on the same gap as everything else. */
+.dash > .dash__head,
+.dash > .stat-grid,
+.dash > .dash__full {
+    grid-column: 1 / -1;
+}
+
+/* .stat-grid keeps its margin for profile.html, which still relies on it.
+   Here the grid gap owns the spacing. */
+.dash > .stat-grid {
+    margin-bottom: 0;
+}
+
+.dash__head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-6);
+}
+
+.dash__greeting {
+    font-size: var(--text-3xl);
+    letter-spacing: var(--tracking-tight);
+}
+
+/* A stretched card needs somewhere for the extra height to go. The header
+   stays put and the panel beneath it absorbs the slack, so real content still
+   starts at the top and only an empty state centres in the leftover space. */
+.dash > .card {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Flex column as well as flex item: the panel has to be a flex container
+   itself for the empty state inside it to fill and centre. Three of these
+   panels are plain divs, so without this the centring only worked in
+   Today's session, which is already a flex list. */
+.dash > .card > .card__header + * {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+
+/* --- Streak -------------------------------------------------- */
+
+.streak {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-6);
+}
+
+.streak__figure {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-2);
+}
+
+.streak__value {
+    font-family: var(--font-display);
+    font-size: var(--text-4xl);
+    font-weight: var(--weight-bold);
+    line-height: 1;
+    letter-spacing: var(--tracking-tighter);
+    color: var(--gold);
+}
+
+.streak__unit {
+    color: var(--text-muted);
+    font-size: var(--text-sm);
+}
+
+.streak__dots {
+    display: flex;
+    gap: var(--space-2);
+}
+
+.streak__dot {
+    width: 14px;
+    height: 14px;
+    border-radius: var(--radius-full);
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+}
+
+.streak__dot.is-filled {
+    background: var(--gold);
+    border-color: var(--gold);
+}
+
+/* Marks today, and only while the streak is alive - a pulse on a broken
+   streak would suggest something is still going. */
+.streak__dot.is-today {
+    box-shadow: 0 0 0 0 var(--gold-ring);
+    animation: streak-pulse 2s var(--ease-out) infinite;
+}
+
+.streak__longest {
+    margin-left: auto;
+    color: var(--text-muted);
+    font-size: var(--text-sm);
+}
+
+@keyframes streak-pulse {
+    70%  { box-shadow: 0 0 0 8px transparent; }
+    100% { box-shadow: 0 0 0 0 transparent; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .streak__dot.is-today {
+        animation: none;
+        box-shadow: 0 0 0 3px var(--gold-ring);
+    }
+}
+
+
+/* --- Personal records --------------------------------------- */
+
+.pr-badge {
+    margin-left: var(--space-2);
+}
+
+
+/* ============================================================
+   ERROR PAGES (404, 500)
+   ============================================================ */
+
+.error-page {
+    text-align: center;
+}
+
+.error-page__code {
+    font-family: var(--font-display);
+    font-size: var(--text-5xl);
+    font-weight: var(--weight-bold);
+    line-height: 1;
+    letter-spacing: var(--tracking-tighter);
+    color: var(--gold);
+    opacity: 0.35;
+    margin-bottom: var(--space-4);
+}
+
+.error-page .page-header__title {
+    margin-bottom: var(--space-3);
+}
+
+.error-page__actions {
+    justify-content: center;
+    margin-top: var(--space-7);
+}
+
+
+/* --- Bodyweight card ---------------------------------------- */
+
+.weight-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    margin-bottom: var(--space-5);
+}
+
+.weight-card__value {
+    font-family: var(--font-display);
+    font-size: var(--text-3xl);
+    font-weight: var(--weight-bold);
+    line-height: var(--leading-tight);
+    letter-spacing: var(--tracking-tighter);
+    color: var(--text);
+}
+
+/* The arrow and the number carry the meaning; colour only reinforces it, so
+   the card is still readable without it. */
+.weight-card__delta {
+    font-size: var(--text-sm);
+    font-weight: var(--weight-semibold);
+    font-variant-numeric: tabular-nums;
+    color: var(--text-muted);
+}
+
+.weight-card__delta--success { color: var(--success); }
+
+/* Amber, not red: drifting from a weight goal is off-track, not an error, and
+   red is this app's error colour. */
+.weight-card__delta--warning { color: var(--warning); }
+
+.weight-log {
+    display: flex;
+    align-items: flex-end;
+    gap: var(--space-3);
+}
+
+.weight-log .field {
+    flex: 1;
+    margin-bottom: 0;
+}
+
+.recent-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding: var(--space-4) var(--space-2);
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    transition: background var(--dur-fast) var(--ease-out),
+                padding-inline var(--dur-fast) var(--ease-out);
+}
+
+.recent-row:last-child {
+    border-bottom: none;
+}
+
+@media (hover: hover) {
+    .recent-row:hover {
+        background: var(--surface-hover);
+        padding-inline: var(--space-4);
+        color: var(--text);
+    }
+}
+
+.recent-row__date {
+    font-weight: var(--weight-medium);
+}
+
+.recent-row__detail {
+    color: var(--text-muted);
+    font-size: var(--text-sm);
+    font-variant-numeric: tabular-nums;
+}
+
+
+/* ============================================================
+   DASHBOARD - today's workout
+   ============================================================ */
+
+.today__list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.today__item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding: var(--space-3) var(--space-4);
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+}
+
+.today__exercise {
+    font-weight: var(--weight-medium);
+}
+
+
+/* ============================================================
+   LOG WORKOUT
+   ============================================================ */
+
+/* Form on the left, the running session pinned alongside it, so the
+   user watches the day accumulate without navigating away. */
+.logger__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    gap: var(--space-7);
+    align-items: start;
+}
+
+.logger__session {
+    position: sticky;
+    top: calc(var(--nav-height) + var(--space-5));
+}
+
+/* Extra room at the foot of the page so the fixed summary bar never
+   covers the last row of the session list. */
+.logger {
+    padding-bottom: var(--space-12);
+}
+
+.step-marker {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    margin-right: var(--space-2);
+    border-radius: var(--radius-full);
+    background: var(--gold-dim);
+    color: var(--gold);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-bold);
+}
+
+
+/* --- Muscle grid -------------------------------------------- */
+
+.muscle-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(104px, 1fr));
+    gap: var(--space-3);
+}
+
+.muscle-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-4) var(--space-2);
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text-muted);
+    transition: transform var(--dur-fast) var(--ease-out),
+                border-color var(--dur-fast) var(--ease-out),
+                background var(--dur-fast) var(--ease-out),
+                color var(--dur-fast) var(--ease-out);
+}
+
+@media (hover: hover) {
+    .muscle-card:hover {
+        transform: translateY(-2px);
+        background: var(--surface-hover);
+        color: var(--text);
+    }
+}
+
+.muscle-card:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+}
+
+.muscle-card.is-selected {
+    transform: translateY(-2px);
+    border-color: var(--gold);
+    background: var(--gold-dim);
+    color: var(--gold);
+    box-shadow: var(--shadow-gold);
+}
+
+.muscle-card__image {
+    width: 56px;
+    height: 56px;
+    object-fit: contain;
+}
+
+.muscle-card__name {
+    font-size: var(--text-xs);
+    font-weight: var(--weight-medium);
+    text-align: center;
+}
+
+
+/* --- Session list ------------------------------------------- */
+
+.session-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    max-height: 60vh;
+    max-height: 60dvh;
+    overflow-y: auto;
+}
+
+.session-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3);
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    animation: rise var(--dur-base) var(--ease-out) both;
+}
+
+/* Optimistically added, not yet confirmed by the server. */
+.session-row.is-pending {
+    opacity: 0.55;
+    border-style: dashed;
+}
+
+.session-row__number {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: var(--radius-full);
+    background: var(--surface);
+    color: var(--text-muted);
+    font-size: var(--text-xs);
+    font-weight: var(--weight-bold);
+    font-variant-numeric: tabular-nums;
+}
+
+.session-row__body {
+    flex: 1;
+    min-width: 0;
+}
+
+.session-row__exercise {
+    display: block;
+    font-weight: var(--weight-medium);
+}
+
+.session-row__detail {
+    display: block;
+    color: var(--text-muted);
+    font-size: var(--text-xs);
+    font-variant-numeric: tabular-nums;
+}
+
+.session-row__delete {
+    flex: none;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: var(--radius-full);
+    color: var(--text-faint);
+    font-size: var(--text-lg);
+    line-height: 1;
+    transition: background var(--dur-fast) var(--ease-out),
+                color var(--dur-fast) var(--ease-out);
+}
+
+@media (hover: hover) {
+    .session-row__delete:hover {
+        background: var(--danger-dim);
+        color: var(--danger);
+    }
+}
+
+.session-row__delete:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+}
+
+
+/* --- Summary bar -------------------------------------------- */
+
+.summary-bar {
+    position: fixed;
+    inset-inline: 0;
+    bottom: 0;
+    z-index: var(--z-nav);
+    background: var(--bg-2);
+    border-top: 1px solid var(--border-strong);
+    box-shadow: var(--shadow-lg);
+}
+
+.summary-bar__inner {
+    display: flex;
+    justify-content: space-around;
+    gap: var(--space-6);
+    padding-block: var(--space-3);
+}
+
+.summary-bar__stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-1);
+}
+
+.summary-bar__label {
+    font-size: var(--text-xs);
+    font-weight: var(--weight-semibold);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+.summary-bar__value {
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    font-weight: var(--weight-bold);
+    font-variant-numeric: tabular-nums;
+    color: var(--text);
+}
+
+/* With the on-screen keyboard open, the fixed bar sits exactly where the Add
+   Set button ends up - so it covers the thing the user is reaching for. Hide it
+   while the form has focus; the totals are not what they need mid-entry.
+   Falls back to leaving the bar visible where :has() is unsupported. */
+@media (max-width: 600px), (pointer: coarse) {
+    body:has(#setForm:focus-within) .summary-bar {
+        display: none;
+    }
+}
+
+
+/* ============================================================
+   EXERCISE LIBRARY
+   ============================================================ */
+
+/* Explicit column counts rather than auto-fill: a lone card stranded on the
+   last row of an auto-fill grid reads as a mistake. */
+.exercise-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-5);
+}
+
+.exercise-count {
+    margin-bottom: var(--space-4);
+    font-size: var(--text-sm);
+}
+
+/* Load more, rather than numbered pages or infinite scroll: the API pages by
+   cursor, which only moves forward, and an explicit button leaves the footer
+   reachable. */
+.load-more {
+    display: flex;
+    justify-content: center;
+    margin-top: var(--space-7);
+}
+
+.exercise-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-6);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-md);
+    text-align: center;
+    cursor: pointer;
+}
+
+.exercise-card:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+}
+
+/* Fixed box holding the image slot. The grid keeps its geometry before any
+   image loads, so nothing shifts as they arrive. */
+.exercise-card__frame {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 88px;
+    height: 88px;
+    margin-bottom: var(--space-2);
+    background: var(--bg-2);
+    border-radius: var(--radius-sm);
+}
+
+.exercise-card__image {
+    width: 88px;
+    height: 88px;
+    object-fit: contain;
+}
+
+.exercise-card__name {
+    font-size: var(--text-lg);
+    font-weight: var(--weight-semibold);
+}
+
+.exercise-card__badges {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-2);
+}
+
+
+/* --- Detail dialog ------------------------------------------ */
+
+.detail__header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    padding-right: var(--space-9);   /* clears the close button */
+    margin-bottom: var(--space-5);
+}
+
+.detail__image {
+    flex: none;
+    width: 72px;
+    height: 72px;
+    object-fit: contain;
+    background: var(--bg-2);
+    border-radius: var(--radius-sm);
+}
+
+.detail__description {
+    padding-bottom: var(--space-5);
+    margin-bottom: var(--space-5);
+    border-bottom: 1px solid var(--border);
+    color: var(--text-muted);
+}
+
+.detail__section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    margin-bottom: var(--space-6);
+}
+
+.detail__heading {
+    font-size: var(--text-xs);
+    font-weight: var(--weight-semibold);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--gold);
+}
+
+.detail__subheading {
+    margin-top: var(--space-3);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-semibold);
+    color: var(--text-muted);
+}
+
+
+/* ============================================================
+   PROFILE
+   ============================================================ */
+
+.profile-hero {
+    display: flex;
+    align-items: center;
+    gap: var(--space-6);
+    margin-bottom: var(--space-6);
+}
+
+.profile-hero__avatar {
+    flex: none;
+    width: 96px;
+    height: 96px;
+    object-fit: cover;
+    border-radius: var(--radius-full);
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+}
+
+.profile-hero__text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    min-width: 0;
+}
+
+.profile-hero__name {
+    font-family: var(--font-display);
+    font-size: var(--text-2xl);
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-tight);
+}
+
+.profile-hero__since {
+    font-size: var(--text-sm);
+}
+
+
+/* --- Missing-value prompt ----------------------------------- */
+/* Sits where a stat value would. Deliberately not styled as a number,
+   so an absent measurement can never be mistaken for a real one. */
+
+.stat-card__prompt {
+    padding: 0;
+    color: var(--gold);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-medium);
+    text-align: left;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+}
+
+@media (hover: hover) {
+    .stat-card__prompt:hover {
+        color: var(--gold-2);
+    }
+}
+
+.stat-card__prompt:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+}
+
+
+/* --- BMI scale ---------------------------------------------- */
+
+.bmi-scale {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.bmi-scale__track {
+    position: relative;
+    display: flex;
+    gap: 2px;                     /* surface gap, not a border */
+    height: 10px;
+}
+
+.bmi-scale__band {
+    border-radius: var(--radius-full);
+    opacity: 0.55;
+}
+
+.bmi-scale__band--success { background: var(--success); }
+.bmi-scale__band--warning { background: var(--warning); }
+.bmi-scale__band--danger { background: var(--danger); }
+
+.bmi-scale__marker {
+    position: absolute;
+    top: -4px;
+    width: 4px;
+    height: 18px;
+    margin-left: -2px;
+    border-radius: var(--radius-full);
+    background: var(--text);
+    box-shadow: var(--shadow-sm);
+}
+
+.bmi-scale__caption {
+    font-size: var(--text-sm);
+    font-weight: var(--weight-semibold);
+    font-variant-numeric: tabular-nums;
+    color: var(--text-muted);
+}
+
+
+.profile-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.profile-item {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-6);
+    padding-block: var(--space-4);
+    border-bottom: 1px solid var(--border);
+}
+
+.profile-item:last-of-type {
+    border-bottom: none;
+}
+
+.profile-item__label {
+    font-size: var(--text-xs);
+    font-weight: var(--weight-semibold);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+.profile-item__value {
+    font-weight: var(--weight-medium);
+    text-align: right;
+}
+
+
+/* ============================================================
+   HISTORY
+   ============================================================ */
+
+.history-list {
+    margin-top: var(--space-6);
+}
+
+.history-more {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-3);
+    margin-top: var(--space-8);
+}
+
+
+/* --- Collapsible session ------------------------------------ */
+
+.session {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+}
+
+.session[open] {
+    border-color: var(--border-strong);
+}
+
+.session__summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    padding: var(--space-5) var(--space-6);
+    cursor: pointer;
+    list-style: none;
+    transition: background var(--dur-fast) var(--ease-out);
+}
+
+.session__summary::-webkit-details-marker {
+    display: none;
+}
+
+@media (hover: hover) {
+    .session__summary:hover {
+        background: var(--surface-hover);
+    }
+}
+
+.session__summary:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: -2px;
+}
+
+/* Disclosure triangle drawn in CSS so the row needs no icon asset. */
+.session__summary::after {
+    content: "";
+    order: 3;
+    width: 8px;
+    height: 8px;
+    margin-left: var(--space-2);
+    border-right: 2px solid var(--text-muted);
+    border-bottom: 2px solid var(--text-muted);
+    transform: rotate(45deg);
+    transition: transform var(--dur-fast) var(--ease-out);
+}
+
+.session[open] > .session__summary::after {
+    transform: rotate(-135deg);
+}
+
+.session__date {
+    font-weight: var(--weight-semibold);
+}
+
+.session__stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-left: auto;
+}
+
+.session__body {
+    padding: 0 var(--space-6) var(--space-6);
+    border-top: 1px solid var(--border);
+    padding-top: var(--space-5);
+}
+
+.session__exercise + .session__exercise {
+    margin-top: var(--space-6);
+}
+
+.session__exercise-name {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-3);
+    font-size: var(--text-lg);
+    font-weight: var(--weight-semibold);
+}
+
+.session-skeleton {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+@media (max-width: 900px) {
+    .hero {
+        flex-direction: column;
+        gap: var(--space-8);
+        padding-block: var(--space-8);
+        text-align: center;
+    }
+
+    .hero__text {
+        max-width: none;
+    }
+
+    .hero__title {
+        font-size: var(--text-4xl);
+    }
+
+    .hero .cluster {
+        justify-content: center;
+    }
+
+    .hero__media img {
+        max-height: 18rem;
+    }
+
+    .dash__head {
+        flex-direction: column;
+        align-items: stretch;
+        gap: var(--space-4);
+    }
+
+    .streak {
+        gap: var(--space-4);
+    }
+
+    .streak__longest {
+        margin-left: 0;
+        flex-basis: 100%;
+    }
+
+    /* Session list drops below the form rather than sitting beside it,
+       and stops sticking - there is nothing left to stick against. */
+    .logger__grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .logger__session {
+        position: static;
+    }
+
+    .exercise-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    /* A sticky bar eats too much of a short viewport once it wraps. */
+    .filter-bar--sticky {
+        position: static;
+    }
+}
+
+@media (max-width: 700px) {
+    .exercise-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+/* Below this the header button is too far from the thumb, so the action
+   becomes a bar pinned to the bottom of the viewport. */
+@media (max-width: 560px) {
+    .dash__action {
+        position: sticky;
+        bottom: var(--space-4);
+        z-index: var(--z-nav);
+        display: flex;
+        width: 100%;
+        box-shadow: var(--shadow-lg);
+    }
+
+    /* The aspect-ratio handles height on its own now; a fixed height here
+       would reintroduce exactly the crop this replaced. Only the cap moves. */
+    .howto__media {
+        max-width: 16rem;
+    }
+
+    .muscle-grid {
+        grid-template-columns: repeat(auto-fill, minmax(88px, 1fr));
+    }
+
+    .exercise-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .detail__header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .summary-bar__inner {
+        gap: var(--space-3);
+    }
+
+    .summary-bar__value {
+        font-size: var(--text-lg);
+    }
+}
+
+@media (max-width: 400px) {
+    .hero__title {
+        font-size: var(--text-3xl);
+    }
+
+    .dash__greeting {
+        font-size: var(--text-2xl);
+    }
+
+    .profile-item {
+        flex-direction: column;
+        gap: var(--space-1);
+    }
+
+    .profile-item__value {
+        text-align: left;
+    }
+
+    .profile-hero {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-4);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .hero__media img {
+        animation: none;
+        transform: none;
+    }
+}

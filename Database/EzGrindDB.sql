@@ -1,0 +1,22 @@
+-- =====================================================================
+-- OBSOLETE - DO NOT RUN THIS FILE
+-- =====================================================================
+--
+-- This was the original schema scratchpad. It mixed CREATE TABLE statements,
+-- exploratory SELECT queries, and later ALTER TABLE fixes into one file, so
+-- running it top to bottom created tables that were then patched by statements
+-- further down. Anyone running it today would get the pre-ALTER shape:
+-- height_cm as an integer, and five users columns missing entirely.
+--
+-- It has been replaced by:
+--
+--   migrations/001_baseline.sql          the schema as it actually exists
+--   migrations/002_constraints_and_indexes.sql
+--   migrations/003_new_tables.sql
+--   seeds/muscle_groups_and_exercises.sql
+--   queries/scratch.sql                  the ad-hoc queries that were in here
+--
+-- Start at Database/README.md.
+--
+-- The original contents of this file remain in git history.
+-- =====================================================================

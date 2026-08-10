@@ -1,0 +1,247 @@
+/* ============================================================
+   motion.css
+   Entrance animation only. Hover and state transitions live with
+   their components; this file owns "how things arrive".
+
+   Loaded last so it can override the resting state of anything in
+   pages.css without needing extra specificity.
+
+   TWO RULES THIS FILE OBEYS ABSOLUTELY
+
+   1. Only transform and opacity are ever animated. Both are handled
+      by the compositor. width, height, top, left and box-shadow all
+      force layout or paint on every frame, which is what makes an
+      intro judder on a mid-range phone - exactly where a training app
+      gets opened.
+
+   2. Every hidden starting state is scoped to html.js-enabled, set by
+      an inline script in <head>. If that script never runs, or JS is
+      off, or a bundle 404s, none of these selectors match and the page
+      renders as plain content. An intro animation whose failure mode is
+      a permanently invisible page is worse than no intro at all.
+
+   TOTAL BUDGET: 1190ms from view reveal to the last element settling.
+   Nothing here blocks input for any of it - see .intro-brand.
+   ============================================================ */
+
+/* The --intro-* timings live in tokens.css with the rest of the motion
+   scale, so every duration in the app is declared in one place. */
+
+
+/* ============================================================
+   1. BRAND MOMENT
+   ============================================================ */
+
+/* Fixed, so it is out of flow and can cause no layout shift, and
+   pointer-events:none so it can never intercept a tap even in the
+   650ms it exists. Nothing underneath is blocked at any point. */
+.intro-brand {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-toast, 400);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg);
+    pointer-events: none;
+}
+
+.js-enabled .intro-brand.is-playing {
+    display: flex;
+    animation: intro-brand-out var(--intro-brand-fade) var(--ease-out)
+               var(--intro-brand-fade-at) forwards;
+}
+
+/* Two stacked copies of the same word. The base is dim; the gold copy
+   is revealed by a scaleX wipe from the left.
+
+   This is deliberately NOT an animated background-position, which is
+   the usual way to sweep a gradient across text: that repaints the
+   glyphs every frame. A scaleX on a clipped overlay is composited, and
+   with a soft-edged static gradient on the gold layer it reads the
+   same way. */
+.intro-brand__word {
+    position: relative;
+    font-size: var(--text-5xl);
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-tighter);
+    line-height: 1;
+    color: var(--text-faint);
+}
+
+.intro-brand__fill {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+}
+
+.intro-brand__fill span {
+    display: block;
+    /* Static gradient. Only the wipe below moves. */
+    background: linear-gradient(90deg, var(--gold) 60%, var(--gold-2) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    transform-origin: left center;
+}
+
+.js-enabled .intro-brand.is-playing .intro-brand__fill span {
+    animation: intro-wipe var(--intro-brand-wipe) var(--ease-out) forwards;
+}
+
+@keyframes intro-wipe {
+    from { transform: scaleX(0); }
+    to   { transform: scaleX(1); }
+}
+
+@keyframes intro-brand-out {
+    to { opacity: 0; }
+}
+
+
+/* ============================================================
+   2. HERO STAGGER
+   ============================================================ */
+
+/* The resting state is the visible one. Only a js-enabled document
+   ever sees the offset, and only until its animation runs. */
+.js-enabled .intro-hero [data-intro] {
+    opacity: 0;
+}
+
+.js-enabled .intro-hero.is-playing [data-intro] {
+    animation: intro-rise var(--intro-hero) var(--ease-out) forwards;
+}
+
+/* 1000ms, then 150ms apart. Written out rather than computed with nth-child
+   arithmetic so the timeline is legible and an element can be reordered
+   without silently changing when it appears.
+
+   Descendant selectors, not child. The staggered elements sit inside
+   .hero__text and .hero__media, so a child combinator here matches nothing
+   and every element fires at once with no stagger at all. */
+.js-enabled .intro-hero.is-playing [data-intro="1"] { animation-delay: 1000ms; }
+.js-enabled .intro-hero.is-playing [data-intro="2"] { animation-delay: 1150ms; }
+.js-enabled .intro-hero.is-playing [data-intro="3"] { animation-delay: 1300ms; }
+.js-enabled .intro-hero.is-playing [data-intro="4"] { animation-delay: 1450ms; }
+
+@keyframes intro-rise {
+    from { opacity: 0; transform: translateY(var(--intro-rise)); }
+    to   { opacity: 1; transform: none; }
+}
+
+/* Second visit inside the same session: straight to the end state. Written as
+   a separate class rather than by withholding .is-playing, because the hidden
+   starting state has to be cancelled explicitly - otherwise a repeat visitor
+   gets a permanently invisible hero, which is the exact failure this file is
+   built to avoid. */
+.js-enabled .intro-hero.is-instant [data-intro],
+.js-enabled .intro-hero.is-instant .hero__glow {
+    opacity: 1;
+    transform: none;
+    animation: none;
+}
+
+
+/* ============================================================
+   3. HERO GLOW
+   ============================================================ */
+
+/* The element already exists and is already absolutely positioned, so
+   scaling it moves no other box. */
+.js-enabled .intro-hero .hero__glow {
+    opacity: 0;
+}
+
+.js-enabled .intro-hero.is-playing .hero__glow {
+    animation: intro-glow var(--intro-glow) var(--ease-out)
+               var(--intro-glow-at) forwards;
+}
+
+@keyframes intro-glow {
+    from { opacity: 0; transform: scale(0.8); }
+    to   { opacity: 1; transform: scale(1); }
+}
+
+
+/* ============================================================
+   4. SCROLL REVEAL
+   ============================================================ */
+
+/* Applied by js/motion.js when an element crosses the threshold.
+
+   DELIBERATELY SEPARATE FROM .stagger, which already exists in
+   components.css and fires on LOAD with `both` fill. The two do
+   different jobs and must not be merged:
+
+     .stagger              above-the-fold content that is populated
+                           asynchronously - the dashboard stat grid is
+                           empty when the page loads, and an empty grid
+                           has zero height, so an IntersectionObserver
+                           with a 15% threshold would never fire and its
+                           cards would stay invisible permanently.
+
+     [data-reveal-stagger] static below-the-fold markup, which has real
+                           dimensions from the start and can safely wait
+                           for the viewport to reach it.
+
+   Children rise one after another. Only the first seven get their own
+   delay - past that a visitor is waiting on choreography. */
+.js-enabled [data-reveal] {
+    opacity: 0;
+}
+
+.js-enabled [data-reveal].is-revealed {
+    animation: intro-rise var(--intro-hero) var(--ease-out) forwards;
+}
+
+.js-enabled [data-reveal-stagger] > * {
+    opacity: 0;
+}
+
+.js-enabled [data-reveal-stagger].is-revealed > * {
+    animation: intro-rise var(--intro-hero) var(--ease-out) forwards;
+}
+
+.js-enabled [data-reveal-stagger].is-revealed > *:nth-child(1) { animation-delay: 0ms; }
+.js-enabled [data-reveal-stagger].is-revealed > *:nth-child(2) { animation-delay: 100ms; }
+.js-enabled [data-reveal-stagger].is-revealed > *:nth-child(3) { animation-delay: 200ms; }
+.js-enabled [data-reveal-stagger].is-revealed > *:nth-child(4) { animation-delay: 300ms; }
+.js-enabled [data-reveal-stagger].is-revealed > *:nth-child(5) { animation-delay: 400ms; }
+.js-enabled [data-reveal-stagger].is-revealed > *:nth-child(6) { animation-delay: 500ms; }
+.js-enabled [data-reveal-stagger].is-revealed > *:nth-child(n+7) { animation-delay: 600ms; }
+
+
+/* ============================================================
+   5. REDUCED MOTION
+   ============================================================
+
+   Not "faster". base.css already collapses every duration to 0.01ms
+   globally, which is the make-it-faster approach - and on its own it
+   would still run these transforms, just imperceptibly, and would still
+   leave the brand overlay flashing on screen for a frame.
+
+   Here the animations are removed and the hidden starting states are
+   cancelled, so content is simply present. Someone who has asked their
+   operating system for less motion gets none.
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+    .js-enabled .intro-brand,
+    .js-enabled .intro-brand.is-playing {
+        display: none;
+    }
+
+    .js-enabled .intro-hero [data-intro],
+    .js-enabled .intro-hero.is-playing [data-intro],
+    .js-enabled .intro-hero .hero__glow,
+    .js-enabled .intro-hero.is-playing .hero__glow,
+    .js-enabled [data-reveal],
+    .js-enabled [data-reveal].is-revealed,
+    .js-enabled [data-reveal-stagger] > *,
+    .js-enabled [data-reveal-stagger].is-revealed > * {
+        opacity: 1;
+        transform: none;
+        animation: none;
+    }
+}

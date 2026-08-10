@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Your EzGrind profile: personal details, body metrics and account settings.">
+    <title>EzGrind | Profile</title>
+
+    <link rel="icon" href="assets/logo.png">
+    <link rel="stylesheet" href="css/tokens.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/pages.css">
+    <link rel="stylesheet" href="css/motion.css">
+
+    <!-- Sets the class every hidden starting state in motion.css hangs
+         off. Inline and synchronous so it lands before first paint, and
+         absent if scripting is off - in which case nothing is ever
+         hidden and the page renders as ordinary content. -->
+    <script>document.documentElement.classList.add("js-enabled");</script>
+</head>
+<body>
+
+    <header id="siteHeader" class="nav"></header>
+
+    <main class="page container section">
+
+        <h1 class="sr-only">Profile</h1>
+
+        <!-- ===== Header ===== -->
+        <section class="card profile-hero" aria-labelledby="profileName">
+            <img class="profile-hero__avatar" src="assets/profile.png" alt=""
+                 width="96" height="96">
+
+            <div class="profile-hero__text">
+                <p class="profile-hero__name" id="profileName"></p>
+                <p class="profile-hero__since text-muted" id="profileSince" hidden></p>
+                <div class="cluster" id="profileGoal"></div>
+            </div>
+        </section>
+
+        <!-- ===== Stats strip ===== -->
+        <section class="stat-grid" id="statGrid" aria-label="Body metrics"></section>
+
+        <section class="card is-hidden" id="bmiScaleCard" aria-labelledby="bmiScaleHeading">
+            <div class="card__header">
+                <h2 class="card__title" id="bmiScaleHeading">Where that sits</h2>
+                <p class="text-muted">
+                    BMI is a population-level ratio of weight to height. It doesn't
+                    distinguish muscle from fat, so people who strength-train regularly
+                    often read as "overweight" while carrying low body fat.
+                </p>
+            </div>
+            <div class="bmi-scale" id="bmiScale"></div>
+        </section>
+
+        <section class="card" aria-labelledby="weightChartHeading">
+            <div class="card__header cluster cluster--between">
+                <h2 class="card__title" id="weightChartHeading">Weight over time</h2>
+                <div class="chips" id="weightRanges" role="group" aria-label="Chart range">
+                    <button type="button" class="chip" data-months="1" aria-pressed="false">1M</button>
+                    <button type="button" class="chip" data-months="3" aria-pressed="true">3M</button>
+                    <button type="button" class="chip" data-months="6" aria-pressed="false">6M</button>
+                    <button type="button" class="chip" data-months="12" aria-pressed="false">1Y</button>
+                    <button type="button" class="chip" data-months="0" aria-pressed="false">All</button>
+                </div>
+            </div>
+            <div id="weightChart"></div>
+        </section>
+
+        <!-- ===== Details / edit ===== -->
+        <section class="card" aria-labelledby="detailsHeading">
+            <div class="card__header cluster cluster--between">
+                <h2 class="card__title" id="detailsHeading">Your details</h2>
+                <button type="button" class="btn btn--secondary btn--sm" id="editBtn">
+                    <span>Edit</span>
+                </button>
+            </div>
+
+            <dl class="profile-list" id="detailsView"></dl>
+
+            <form id="detailsForm" class="is-hidden" novalidate>
+
+                <div class="field">
+                    <label class="field__label" for="full_name">Full name</label>
+                    <input class="input" type="text" id="full_name" name="full_name"
+                           autocomplete="name" required aria-describedby="full_nameError">
+                    <p class="form-error" id="full_nameError"></p>
+                </div>
+
+                <div class="field">
+                    <label class="field__label" for="contact_number">Contact number</label>
+                    <input class="input" type="tel" id="contact_number" name="contact_number"
+                           inputmode="numeric" autocomplete="tel"
+                           aria-describedby="contact_numberHint contact_numberError">
+                    <span class="field__hint" id="contact_numberHint">10 digits. Leave empty to remove it.</span>
+                    <p class="form-error" id="contact_numberError"></p>
+                </div>
+
+                <div class="field">
+                    <label class="field__label" for="date_of_birth">Date of birth</label>
+                    <input class="input" type="date" id="date_of_birth" name="date_of_birth"
+                           autocomplete="bday" aria-describedby="date_of_birthError">
+                    <p class="form-error" id="date_of_birthError"></p>
+                </div>
+
+                <div class="grid grid--2">
+                    <div class="field">
+                        <label class="field__label" for="height_cm">Height (cm)</label>
+                        <input class="input" type="number" id="height_cm" name="height_cm"
+                               min="1" max="300" aria-describedby="height_cmError">
+                        <p class="form-error" id="height_cmError"></p>
+                    </div>
+
+                    <div class="field">
+                        <label class="field__label" for="weight_kg">Weight (kg)</label>
+                        <input class="input" type="number" id="weight_kg" name="weight_kg"
+                               min="1" max="500" aria-describedby="weight_kgError">
+                        <p class="form-error" id="weight_kgError"></p>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="field__label" for="fitness_goal">Fitness goal</label>
+                    <select class="select" id="fitness_goal" name="fitness_goal"
+                            aria-describedby="fitness_goalError">
+                        <option value="">No goal set</option>
+                        <option value="gain">Gain Weight</option>
+                        <option value="lose">Lose Weight</option>
+                        <option value="maintain">Maintain Weight</option>
+                        <option value="muscle">Build Muscle</option>
+                    </select>
+                    <p class="form-error" id="fitness_goalError"></p>
+                </div>
+
+                <p class="form-error" id="detailsError" role="alert"></p>
+
+                <div class="cluster">
+                    <button type="submit" class="btn btn--primary" id="saveBtn">
+                        <span>Save changes</span>
+                    </button>
+                    <button type="button" class="btn btn--ghost" id="cancelBtn">
+                        <span>Cancel</span>
+                    </button>
+                </div>
+
+            </form>
+        </section>
+
+        <!-- ===== Password ===== -->
+        <section class="card" aria-labelledby="passwordHeading">
+            <div class="card__header">
+                <h2 class="card__title" id="passwordHeading">Change password</h2>
+                <p class="text-muted">You will stay signed in on this device.</p>
+            </div>
+
+            <form id="passwordForm" novalidate>
+
+                <div class="field">
+                    <label class="field__label" for="current_password">Current password</label>
+                    <div class="input-wrap">
+                        <input class="input" type="password" id="current_password"
+                               name="current_password" autocomplete="current-password"
+                               required aria-describedby="current_passwordError">
+                        <button type="button" class="input__action" id="currentToggle"
+                                aria-pressed="false" aria-controls="current_password">Show</button>
+                    </div>
+                    <p class="form-error" id="current_passwordError"></p>
+                </div>
+
+                <div class="field">
+                    <label class="field__label" for="new_password">New password</label>
+                    <div class="input-wrap">
+                        <input class="input" type="password" id="new_password"
+                               name="new_password" autocomplete="new-password"
+                               required aria-describedby="new_passwordError">
+                        <button type="button" class="input__action" id="newToggle"
+                                aria-pressed="false" aria-controls="new_password">Show</button>
+                    </div>
+
+                    <div class="strength-meter" id="new_passwordStrength" data-score="0" hidden>
+                        <div class="strength-meter__track" aria-hidden="true">
+                            <span class="strength-meter__segment"></span>
+                            <span class="strength-meter__segment"></span>
+                            <span class="strength-meter__segment"></span>
+                            <span class="strength-meter__segment"></span>
+                        </div>
+                        <p class="strength-meter__label" id="new_passwordStrengthLabel"
+                           aria-live="polite"></p>
+                    </div>
+
+                    <div id="new_passwordRequirements"></div>
+                    <p class="form-error" id="new_passwordError"></p>
+                </div>
+
+                <div class="field">
+                    <label class="field__label" for="confirm_password">Confirm new password</label>
+                    <input class="input" type="password" id="confirm_password"
+                           name="confirm_password" autocomplete="new-password"
+                           required aria-describedby="confirm_passwordError">
+                    <p class="form-error" id="confirm_passwordError"></p>
+                </div>
+
+                <p class="form-error" id="passwordFormError" role="alert"></p>
+
+                <button type="submit" class="btn btn--primary" id="passwordBtn">
+                    <span>Update password</span>
+                </button>
+
+            </form>
+        </section>
+
+        <!-- ===== Session ===== -->
+        <section class="card" aria-labelledby="sessionHeading">
+            <div class="card__header">
+                <h2 class="card__title" id="sessionHeading">Session</h2>
+            </div>
+            <button type="button" class="btn btn--secondary" id="logoutBtn">
+                <span>Log Out</span>
+            </button>
+        </section>
+
+        <!-- ===== Danger zone ===== -->
+        <section class="card card--danger" aria-labelledby="dangerHeading">
+            <div class="card__header">
+                <h2 class="card__title" id="dangerHeading">Danger zone</h2>
+                <p class="text-muted">
+                    Deleting your account removes your profile and every workout and set
+                    you have logged. This cannot be undone.
+                </p>
+            </div>
+            <button type="button" class="btn btn--danger" id="deleteBtn">
+                <span>Delete my account</span>
+            </button>
+        </section>
+
+    </main>
+
+    <footer id="siteFooter" class="footer"></footer>
+
+    <script src="js/api.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/motion.js"></script>
+    <script src="js/components/shell.js"></script>
+    <script src="js/charts.js"></script>
+    <script src="js/profile.js"></script>
+
+</body>
+</html>
