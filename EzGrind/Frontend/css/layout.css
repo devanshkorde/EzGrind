@@ -1,0 +1,290 @@
+/* ============================================================
+   LAYOUT
+   Page shells, containers, grids and the responsive rules.
+   Positions things; never paints them.
+   ============================================================ */
+
+/* The page is a column: header, main that absorbs slack, footer
+   pinned to the bottom even on short pages. */
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+.page {
+    flex: 1;
+}
+
+.container {
+    width: 100%;
+    max-width: var(--container);
+    margin-inline: auto;
+    padding-inline: var(--space-7);
+}
+
+.container--narrow {
+    max-width: var(--container-narrow);
+}
+
+.section {
+    padding-block: var(--space-10);
+}
+
+.section--tight {
+    padding-block: var(--space-8);
+}
+
+.page-header {
+    margin-bottom: var(--space-8);
+}
+
+.page-header__title {
+    font-size: var(--text-3xl);
+    letter-spacing: var(--tracking-tight);
+}
+
+.page-header__subtitle {
+    margin-top: var(--space-2);
+    color: var(--text-muted);
+}
+
+
+/* --- Centred single-card pages ------------------------------ */
+
+.shell-centered {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-10) var(--space-6);
+}
+
+.shell-centered > .card {
+    width: 100%;
+    max-width: var(--container-narrow);
+}
+
+
+/* --- Split auth shell (login, signup) ----------------------- */
+/* Brand panel left, form right. The brand column is fixed so the
+   form never stretches past a comfortable measure on wide screens. */
+
+.auth-split {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    min-height: 100vh;
+    min-height: 100dvh;      /* iOS: see the note in base.css */
+}
+
+.auth-split__form {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-10) var(--space-8);
+    background: var(--bg);
+}
+
+.auth-split__form > .card {
+    width: 100%;
+    max-width: 34rem;
+}
+
+@media (max-width: 900px) {
+    /* Brand collapses to a compact header strip above the form. */
+    .auth-split {
+        grid-template-columns: minmax(0, 1fr);
+        min-height: auto;
+    }
+
+    .auth-split__form {
+        padding: var(--space-8) var(--space-5);
+    }
+}
+
+@media (max-width: 400px) {
+    .auth-split__form {
+        padding: var(--space-6) var(--space-4);
+    }
+}
+
+
+/* --- Stacks and clusters ------------------------------------ */
+
+.stack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.stack--lg { gap: var(--space-6); }
+.stack--sm { gap: var(--space-2); }
+
+.cluster {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.cluster--between {
+    justify-content: space-between;
+}
+
+
+/* --- Grids -------------------------------------------------- */
+
+.grid {
+    display: grid;
+    gap: var(--space-6);
+}
+
+.grid--cards {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+}
+
+.grid--stats {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+.grid--2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.grid--3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+/* 4 across, 2 at tablet, 1 on a phone. Explicit counts rather than auto-fit,
+   because a lone third card on a row reads as a mistake. */
+.stat-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-5);
+    margin-bottom: var(--space-9);
+}
+
+.section__head {
+    max-width: 46rem;
+    margin-bottom: var(--space-8);
+}
+
+.section__head h2 {
+    margin-bottom: var(--space-2);
+}
+
+
+/* ============================================================
+   RESPONSIVE
+   Desktop-first, per the project rules. Must hold to 360px.
+   ============================================================ */
+
+@media (max-width: 900px) {
+    .container {
+        padding-inline: var(--space-5);
+    }
+
+    .section {
+        padding-block: var(--space-8);
+    }
+
+    .grid--2,
+    .grid--3 {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .stat-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 560px) {
+    .stat-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+/* Container padding must be no more than 20px below 600px - past that it is
+   eating content width rather than giving it room. */
+@media (max-width: 600px) {
+    .shell-centered {
+        padding: var(--space-7) var(--space-5);
+    }
+
+    .auth-split__form {
+        padding: var(--space-7) var(--space-5);
+    }
+}
+
+@media (max-width: 640px) {
+    .nav {
+        flex-wrap: wrap;
+        gap: var(--space-3);
+        padding: var(--space-3) var(--space-5);
+    }
+
+    .nav__links {
+        margin-left: 0;
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    .page-header__title {
+        font-size: var(--text-2xl);
+    }
+
+    .card {
+        padding: var(--space-5);
+    }
+
+    /* Toasts move to the top on narrow screens. At the bottom they collide with
+       the log-workout summary bar and the sticky Log Workout action, both of
+       which live down there on mobile. */
+    .toast-region {
+        right: var(--space-4);
+        left: var(--space-4);
+        bottom: auto;
+        top: var(--space-4);
+        max-width: none;
+    }
+
+    .is-offline .toast-region {
+        top: calc(2.5rem + var(--space-4));
+    }
+
+    .toast {
+        animation-name: toast-in-top;
+    }
+}
+
+/* 360px is the floor the project must not break below. Padding
+   shrinks before content does, and nothing is allowed to force
+   the body wider than the viewport. */
+@media (max-width: 400px) {
+    .container {
+        padding-inline: var(--space-4);
+    }
+
+    .nav {
+        padding: var(--space-3) var(--space-4);
+    }
+
+    .nav__brand {
+        font-size: var(--text-lg);
+    }
+
+    .nav__brand img {
+        width: 32px;
+        height: 32px;
+    }
+
+    .nav__link {
+        padding: var(--space-2) var(--space-3);
+    }
+
+    .card {
+        padding: var(--space-4);
+    }
+
+    .shell-centered {
+        padding: var(--space-6) var(--space-4);
+    }
+}

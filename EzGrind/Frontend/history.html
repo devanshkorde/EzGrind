@@ -1,20 +1,100 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Your full EzGrind training history, grouped by session, with volume over time.">
+    <title>EzGrind | Workout History</title>
 
-    <title>Workout History | EzGrind</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" href="assets/logo.png">
+    <link rel="stylesheet" href="css/tokens.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/pages.css">
+    <link rel="stylesheet" href="css/motion.css">
+
+    <!-- Sets the class every hidden starting state in motion.css hangs
+         off. Inline and synchronous so it lands before first paint, and
+         absent if scripting is off - in which case nothing is ever
+         hidden and the page renders as ordinary content. -->
+    <script>document.documentElement.classList.add("js-enabled");</script>
 </head>
 <body>
 
-<section id="historySection">
-<div class="theme-card history-card">
-    <h2>Workout History</h2>
-    <div id="historyContainer"></div>
-</div>
-</section>
+    <header id="siteHeader" class="nav"></header>
 
-<script src="js/history.js"></script>
+    <main class="page container section">
+
+        <div class="page-header">
+            <h1 class="page-header__title">Workout History</h1>
+            <p class="page-header__subtitle">Every session you have logged, newest first.</p>
+        </div>
+
+        <!-- One filter row above everything it scopes: the chart and the list
+             always show the same slice. -->
+        <form class="filter-bar" id="filterBar">
+            <div class="field">
+                <label class="field__label" for="filterFrom">From</label>
+                <input class="input" type="date" id="filterFrom" name="from">
+            </div>
+
+            <div class="field">
+                <label class="field__label" for="filterTo">To</label>
+                <input class="input" type="date" id="filterTo" name="to">
+            </div>
+
+            <div class="field">
+                <label class="field__label" for="filterMuscle">Muscle group</label>
+                <select class="select" id="filterMuscle" name="muscle_id">
+                    <option value="">All muscles</option>
+                </select>
+            </div>
+
+            <div class="field">
+                <label class="field__label" for="filterExercise">Exercise</label>
+                <select class="select" id="filterExercise" name="exercise_id">
+                    <option value="">All exercises</option>
+                </select>
+            </div>
+
+            <div class="filter-bar__actions">
+                <button type="submit" class="btn btn--primary btn--sm">
+                    <span>Apply</span>
+                </button>
+                <button type="button" class="btn btn--ghost btn--sm" id="clearFilters">
+                    <span>Clear</span>
+                </button>
+            </div>
+        </form>
+
+        <section class="card" aria-labelledby="chartHeading">
+            <div class="card__header">
+                <h2 class="card__title" id="chartHeading">Volume per session</h2>
+                <p class="text-muted">Kilograms lifted, oldest to newest.</p>
+            </div>
+            <div id="volumeChart"></div>
+        </section>
+
+        <div id="historyList" class="stack stack--lg history-list"></div>
+
+        <div class="history-more">
+            <button type="button" class="btn btn--secondary is-hidden" id="loadMoreBtn">
+                <span>Load more</span>
+            </button>
+            <p class="text-muted" id="resultCount"></p>
+        </div>
+
+    </main>
+
+    <footer id="siteFooter" class="footer"></footer>
+
+    <script src="js/api.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/motion.js"></script>
+    <script src="js/components/shell.js"></script>
+    <script src="js/charts.js"></script>
+    <script src="js/history.js"></script>
 
 </body>
 </html>

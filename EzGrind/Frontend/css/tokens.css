@@ -1,0 +1,165 @@
+/* ============================================================
+   TOKENS
+   The only file in the project permitted to contain a literal
+   colour, size or duration. Everything else references these.
+   Custom properties only - no selectors beyond :root.
+   ============================================================ */
+
+:root {
+
+    /* --- Surfaces ------------------------------------------ */
+    --bg: #080808;
+    --bg-2: #121212;
+    --surface: #1A1A1A;
+    --surface-hover: #212121;
+    --surface-sunken: #0E0E0E;
+
+    /* Borders read as light lifted off the surface, not as lines
+       drawn on it, so they are white at low alpha rather than grey. */
+    --border: rgba(255, 255, 255, 0.08);
+    --border-strong: rgba(255, 255, 255, 0.14);
+
+    /* --- Brand --------------------------------------------- */
+    --gold: #C9A84C;
+    --gold-2: #D7B414;
+    --gold-dim: rgba(201, 168, 76, 0.14);
+    --gold-ring: rgba(201, 168, 76, 0.35);
+
+    /* --- Text ---------------------------------------------- */
+    /* Measured against every surface below, not chosen by eye. Worst case is
+       --surface-hover #212121, the lightest thing text ever sits on.
+         --text        18.4:1 on --bg   14.8:1 on --surface-hover
+         --text-muted   7.1:1           5.7:1
+         --text-faint   5.7:1           4.5:1   <- was #6B6B6B at 3.0:1, failing
+       All clear WCAG AA for body text (4.5:1). */
+    --text: #F5F5F5;
+    --text-muted: #9A9A9A;
+    --text-faint: #888888;
+    --text-on-gold: #141005;
+
+    /* --- Status -------------------------------------------- */
+    /* Same measurement. --gold 7.1:1, --success 6.9:1, --warning 7.5:1 and
+       --danger 4.6:1 against --surface-hover. */
+    --success: #3FBF7F;
+    --success-dim: rgba(63, 191, 127, 0.14);
+    --danger: #EB5459;
+    --danger-dim: rgba(235, 84, 89, 0.14);
+    /* A red dark enough for white text to reach 4.5:1 on it. --danger itself is
+       tuned to be readable ON a dark surface, which pulls it the opposite way -
+       one value cannot do both jobs. */
+    --danger-strong: #CB3B40;
+    --warning: #E8A33D;
+    --warning-dim: rgba(232, 163, 61, 0.14);
+
+    /* --- Spacing: 4px base --------------------------------- */
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 20px;
+    --space-6: 24px;
+    --space-7: 32px;
+    --space-8: 40px;
+    --space-9: 48px;
+    --space-10: 64px;
+    --space-11: 80px;
+    --space-12: 96px;
+
+    /* --- Radii --------------------------------------------- */
+    --radius-sm: 8px;
+    --radius: 16px;
+    --radius-lg: 24px;
+    --radius-full: 999px;
+
+    /* --- Shadows ------------------------------------------- */
+    /* Negative spread keeps the shadow under the element instead of
+       haloing it - a hard drop shadow on a near-black background
+       reads as a smudge. */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.30);
+    --shadow-md: 0 8px 24px -8px rgba(0, 0, 0, 0.45);
+    --shadow-lg: 0 24px 64px -16px rgba(0, 0, 0, 0.55);
+    --shadow-gold: 0 8px 24px -8px var(--gold-ring);
+
+    /* --- Type ---------------------------------------------- */
+    /* System stack: nothing to download, so no render-blocking font
+       request and no binary in the repo. Hierarchy comes from size,
+       weight and tracking rather than a second family.
+       TO ADOPT A DISPLAY FACE LATER: change --font-display only. */
+    --font-sans: system-ui, -apple-system, "Segoe UI", Roboto,
+                 "Helvetica Neue", Arial, sans-serif;
+    --font-display: var(--font-sans);
+
+    --text-xs: 0.75rem;      /* 12px */
+    --text-sm: 0.875rem;     /* 14px */
+    /* 16px is a floor, not a preference: iOS Safari zooms the whole page when
+       a focused input's font-size is below it. Every .input/.select/.textarea
+       uses this token, so do not lower it. */
+    --text-base: 1rem;       /* 16px */
+    --text-lg: 1.125rem;     /* 18px */
+    --text-xl: 1.375rem;     /* 22px */
+    --text-2xl: 1.75rem;     /* 28px */
+    --text-3xl: 2.25rem;     /* 36px */
+    --text-4xl: 3rem;        /* 48px */
+    --text-5xl: 4rem;        /* 64px, hero only */
+
+    --weight-regular: 400;
+    --weight-medium: 500;
+    --weight-semibold: 600;
+    --weight-bold: 700;
+
+    /* Headings read tighter than body text at every size. */
+    --leading-tight: 1.2;
+    --leading-snug: 1.4;
+    --leading-body: 1.6;
+
+    /* Large type needs negative tracking to stop looking loose;
+       small uppercase labels need positive tracking to stay legible. */
+    --tracking-tighter: -0.03em;
+    --tracking-tight: -0.015em;
+    --tracking-normal: 0;
+    --tracking-wide: 0.08em;
+
+    /* --- Motion -------------------------------------------- */
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    --dur-fast: 150ms;
+    --dur-base: 250ms;
+    --dur-slow: 400ms;
+
+    /* Entrance timeline, used only by motion.css. Named so the intro reads
+       as a sequence rather than being reverse-engineered from scattered
+       delays, and kept here so every duration in the app lives in one file.
+
+       The whole intro settles at 1950ms. The brand wipe runs to 1000ms and
+       fades out by 1100ms, with the hero starting underneath it at 1000ms so
+       the two overlap rather than queue - sequenced end to end the same
+       content would take past 2.4s.
+
+       Every step was stretched rather than padded with dead time: the wipe
+       is slower, each hero element takes longer, and the gaps between them
+       widened from 80ms to 150ms. A longer intro made of the same short
+       movements separated by waiting reads as lag, not as pacing. */
+    --intro-brand-wipe: 1000ms;
+    --intro-brand-fade: 200ms;
+    --intro-brand-fade-at: 900ms;
+
+    --intro-glow-at: 500ms;
+    --intro-glow: 1200ms;
+
+    --intro-hero-at: 1000ms;
+    --intro-hero-step: 150ms;
+    --intro-hero: 500ms;
+
+    /* How far a revealing element travels. Small on purpose: a long throw
+       reads as decoration, a short one reads as arrival. */
+    --intro-rise: 16px;
+
+    /* --- Layout -------------------------------------------- */
+    --container: 1200px;
+    --container-narrow: 640px;
+    --nav-height: 72px;
+
+    /* --- Stacking ------------------------------------------ */
+    --z-nav: 100;
+    --z-modal: 1000;
+    --z-toast: 1100;
+}

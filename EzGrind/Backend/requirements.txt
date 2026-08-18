@@ -1,4 +1,29 @@
-flask
-flask-cors
-mysql-connector-python
-werkzeug
+Flask==3.0.3
+Werkzeug==3.0.3
+Flask-Cors==4.0.1
+Flask-Limiter==3.8.0
+psycopg2-binary==2.9.10
+
+# NOTE FOR THIS MACHINE ONLY. The above is correct everywhere pip can find a
+# wheel. It cannot here: this project's interpreter is MSYS2/mingw64 CPython,
+# whose platform tag is mingw_x86_64, and every psycopg2-binary wheel on PyPI
+# is tagged win_amd64 - so pip falls through to a source build that mingw's
+# setuptools then refuses. Building it by hand fails further along in gcc.
+#
+# MSYS2 ships a prebuilt one for exactly this reason. If the venv is ever
+# rebuilt on this machine:
+#     C:\msys64\usr\bin\pacman.exe -S mingw-w64-x86_64-python-psycopg2
+# then copy psycopg2\ and psycopg2-*.egg-info from
+#     C:\msys64\mingw64\lib\python3.10\site-packages
+# into venv\lib\python3.10\site-packages. That yields 2.9.6, which is API
+# identical for everything used here.
+#
+# On any ordinary CPython - a python.org install, a Linux host, a container -
+# `pip install -r requirements.txt` just works and none of this applies.
+python-dotenv==1.0.1
+
+# Mozilla's CA bundle. No dependencies of its own - it is a .pem file and a
+# where() function. Needed because this project's MSYS2/mingw64 Python looks
+# for its trust store at a path that does not exist and therefore loads zero
+# CA certificates, which makes every HTTPS request fail verification.
+certifi==2026.7.22

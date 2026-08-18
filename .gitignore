@@ -1,0 +1,28 @@
+# Virtualenv
+venv/
+.venv/
+bin/
+lib/
+lib64/
+include/
+Scripts/
+pyvenv.cfg
+
+# Python
+__pycache__/
+*.pyc
+
+# Secrets
+.env
+
+# OS
+.DS_Store
+
+# Logs
+*.log
+
+# Generated email preview (regenerate with a script, never commit)
+preview_welcome_email.html
+
+# Database backups
+EzGrind/Database/backup_*.sql

@@ -1,38 +1,176 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Sign Up | EzGrind</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Create your EzGrind account and start tracking workouts today.">
+    <title>EzGrind | Sign Up</title>
 
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" href="assets/logo.png">
+    <link rel="stylesheet" href="css/tokens.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/pages.css">
+    <link rel="stylesheet" href="css/motion.css">
+
+    <!-- Sets the class every hidden starting state in motion.css hangs
+         off. Inline and synchronous so it lands before first paint, and
+         absent if scripting is off - in which case nothing is ever
+         hidden and the page renders as ordinary content. -->
+    <script>document.documentElement.classList.add("js-enabled");</script>
 </head>
-<section>
-<div class="theme-card signup-card">
-  <h2>Create Your EzGrind Account💪</h2>
+<body>
 
-  <form id="signupForm">
+    <div class="auth-split">
 
-    <input type="text" placeholder="Full Name" id="fullName" required>
-    <input type="email" placeholder="Email" id="email" required>
-    <input type="text" placeholder="Contact Number" id="contact">
-    <input type="date" id="dob">
-    <input type="number" placeholder="Height (cm)" id="height">
-    <input type="number" placeholder="Weight (kg)" id="weight">
+        <header class="auth-brand">
+            <a class="auth-brand__mark" href="index.html">
+                <img src="assets/logo.png" alt="" width="48" height="48">
+                <span>EzGrind</span>
+            </a>
 
-    <select id="fitnessGoal">
-        <option value="">Select Fitness Goal</option>
-        <option value="gain">Gain Weight</option>
-        <option value="lose">Lose Weight</option>
-        <option value="maintain">Maintain Weight</option>
-        <option value="muscle">Build Muscle</option>
-    </select>
+            <p class="auth-brand__copy">
+                Start where you are. <em>Track everything.</em>
+            </p>
 
-    <input type="password" placeholder="Password" id="password" required>
+            <p class="auth-brand__footnote">Takes about a minute.</p>
+        </header>
 
-    <button type="submit" class="cta-btn">Sign Up</button>
+        <main class="auth-split__form">
+            <div class="card">
 
-  </form>
-</div>
-<script src="js/signup.js"></script>
+                <div class="card__header">
+                    <h1 class="page-header__title">Create your account</h1>
+                    <p class="page-header__subtitle">Body details help tailor your goal — all optional except the basics.</p>
+                </div>
+
+                <form id="signupForm" novalidate>
+
+                    <fieldset class="form-section">
+                        <legend class="form-section__title">Account</legend>
+
+                        <div class="field">
+                            <label class="field__label" for="fullName">Full name</label>
+                            <input class="input" type="text" id="fullName" name="fullName"
+                                   autocomplete="name" required
+                                   aria-describedby="fullNameError">
+                            <p class="form-error" id="fullNameError"></p>
+                        </div>
+
+                        <div class="field">
+                            <label class="field__label" for="email">Email</label>
+                            <input class="input" type="email" id="email" name="email"
+                                   autocomplete="email" required
+                                   aria-describedby="emailError">
+                            <p class="form-error" id="emailError"></p>
+                        </div>
+
+                        <div class="field">
+                            <label class="field__label" for="password">Password</label>
+                            <div class="input-wrap">
+                                <input class="input" type="password" id="password" name="password"
+                                       autocomplete="new-password" required
+                                       aria-describedby="passwordError">
+                                <button type="button" class="input__action"
+                                        id="passwordToggle" aria-pressed="false"
+                                        aria-controls="password">Show</button>
+                            </div>
+
+                            <div class="strength-meter" id="passwordStrength" data-score="0" hidden>
+                                <div class="strength-meter__track" aria-hidden="true">
+                                    <span class="strength-meter__segment"></span>
+                                    <span class="strength-meter__segment"></span>
+                                    <span class="strength-meter__segment"></span>
+                                    <span class="strength-meter__segment"></span>
+                                </div>
+                                <p class="strength-meter__label" id="passwordStrengthLabel"
+                                   aria-live="polite"></p>
+                            </div>
+
+                            <!-- The checklist replaces the old static hint: it
+                                 says the same thing but tracks what has
+                                 actually been typed. -->
+                            <div id="passwordRequirements"></div>
+                            <p class="form-error" id="passwordError"></p>
+                        </div>
+                    </fieldset>
+
+                    <fieldset class="form-section">
+                        <legend class="form-section__title">Your body</legend>
+
+                        <div class="field">
+                            <label class="field__label" for="contact">Contact number</label>
+                            <input class="input" type="tel" id="contact" name="contact"
+                                   inputmode="numeric" autocomplete="tel" required
+                                   aria-describedby="contactHint contactError">
+                            <span class="field__hint" id="contactHint">10 digits, no spaces.</span>
+                            <p class="form-error" id="contactError"></p>
+                        </div>
+
+                        <div class="field">
+                            <label class="field__label" for="dob">Date of birth</label>
+                            <input class="input" type="date" id="dob" name="dob"
+                                   autocomplete="bday" aria-describedby="dobError">
+                            <p class="form-error" id="dobError"></p>
+                        </div>
+
+                        <div class="grid grid--2">
+                            <div class="field">
+                                <label class="field__label" for="height">Height (cm)</label>
+                                <input class="input" type="number" id="height" name="height"
+                                       min="1" max="300" required
+                                       aria-describedby="heightError">
+                                <p class="form-error" id="heightError"></p>
+                            </div>
+
+                            <div class="field">
+                                <label class="field__label" for="weight">Weight (kg)</label>
+                                <input class="input" type="number" id="weight" name="weight"
+                                       min="1" max="500" required
+                                       aria-describedby="weightError">
+                                <p class="form-error" id="weightError"></p>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label class="field__label" for="fitnessGoal">Fitness goal</label>
+                            <select class="select" id="fitnessGoal" name="fitnessGoal" required
+                                    aria-describedby="fitnessGoalError">
+                                <option value="">Select a goal</option>
+                                <option value="gain">Gain Weight</option>
+                                <option value="lose">Lose Weight</option>
+                                <option value="maintain">Maintain Weight</option>
+                                <option value="muscle">Build Muscle</option>
+                            </select>
+                            <p class="form-error" id="fitnessGoalError"></p>
+                        </div>
+                    </fieldset>
+
+                    <p class="form-error" id="formError" role="alert"></p>
+
+                    <button type="submit" class="btn btn--primary btn--block" id="signupBtn">
+                        <span>Create Account</span>
+                    </button>
+
+                </form>
+
+                <p class="card__footer">
+                    Already have an account? <a href="login.html">Log in</a>.
+                </p>
+
+            </div>
+        </main>
+
+    </div>
+
+    <footer id="siteFooter" class="footer"></footer>
+
+    <script src="js/api.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/motion.js"></script>
+    <script src="js/components/shell.js"></script>
+    <script src="js/signup.js"></script>
 
 </body>
 </html>

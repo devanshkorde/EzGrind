@@ -1,0 +1,57 @@
+{#
+  Shared skeleton for every EzGrind email.
+
+  HTML email is not web HTML. Gmail strips <style> blocks, Outlook renders
+  through Word, and flexbox, grid, custom properties and external stylesheets
+  are all unavailable. Everything below is a table with inline styles because
+  that is what still works everywhere.
+
+  This file contains no image tags, and should never gain one. The wordmark is
+  text, so the message renders identically whether or not a client blocks
+  images - which most do by default.
+
+  Colours are the app's design tokens written out as literals. An email cannot
+  read a CSS custom property; there is no stylesheet to read it from.
+    #080808 background   #1A1A1A card   #2A2A2A border
+    #F5F5F5 text         #9A9A9A muted  #C9A84C gold
+#}
+<body style="margin:0;padding:0;background:#080808;">
+
+{# The grey line Gmail shows after the subject in the inbox list. Hidden in the
+   body itself, so it is a second headline rather than duplicated copy. #}
+<div style="display:none;font-size:1px;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;">
+  {% block preheader %}{% endblock %}
+</div>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
+       style="background:#080808;padding:32px 12px;">
+ <tr><td align="center">
+
+  <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0"
+         style="width:100%;max-width:600px;background:#1A1A1A;border-radius:16px;
+                border:1px solid #2A2A2A;">
+
+   <tr><td style="padding:40px 40px 0 40px;">
+     <span style="font-family:Helvetica,Arial,sans-serif;font-size:22px;
+                  font-weight:bold;letter-spacing:1px;color:#C9A84C;">EzGrind</span>
+   </td></tr>
+
+   {% block content %}{% endblock %}
+
+   <tr><td style="padding:28px 40px 0 40px;">
+     <hr style="border:0;border-top:1px solid #2A2A2A;margin:0;">
+   </td></tr>
+
+   <tr><td style="padding:20px 40px 40px 40px;">
+     <p style="margin:0;font-family:Helvetica,Arial,sans-serif;font-size:13px;
+               line-height:20px;color:#9A9A9A;">
+       You're getting this because someone signed up for EzGrind with this
+       address. If that wasn't you, ignore this email.
+     </p>
+   </td></tr>
+
+  </table>
+
+ </td></tr>
+</table>
+</body>

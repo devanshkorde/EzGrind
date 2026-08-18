@@ -2,150 +2,308 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>EzGrind | Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="EzGrind: track every set, watch your streak, and see your training add up.">
+    <title>EzGrind | Train with intent</title>
 
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" href="assets/logo.png">
+    <link rel="stylesheet" href="css/tokens.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/pages.css">
+    <link rel="stylesheet" href="css/motion.css">
 
-    <!-- Google Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Every hidden starting state in motion.css hangs off this class, and it
+         is set here rather than from a bundle on purpose: inline and
+         synchronous, so it is in place before the first paint (no flash of
+         positioned content), and absent if scripting is off or a file fails to
+         load. Content then renders normally instead of waiting forever for an
+         animation that will never run. -->
+    <script>document.documentElement.classList.add("js-enabled");</script>
 
+    <!-- Both views start hidden so neither flashes before we know who is
+         looking. Without JavaScript there is no session to check, so the
+         landing page is the correct thing to show. -->
+    <noscript>
+        <style>#landingView { display: block !important; }</style>
+    </noscript>
 </head>
 <body>
 
-    <!-- Navbar -->
-    <nav class="navbar">
-    <div class="brand">
-        <img src="assets/logo.png" alt="EzGrind Logo">
-        <h2 class="app-name">EzGrind</h2>
-    </div>
-    <button class="profile-btn" onclick="openProfile()">
-        <a href="profile.html">
-        <img src="assets/profile.png" alt="Profile">
-        </a>
-</button>
-
-</nav>
-
-
-    <!-- Hero Dashboard Section -->
-    <section class="hero">
-
-        <div class="hero-text">
-            <span class="tagline"># Track. Train. Triumph.</span>
-            <h3 id="greetingText"></h3>
-            <h1>
-                Your daily dose  <br>
-                of <span class="highlight">discipline</span>
-            </h1>
-
-            <p>
-                Track workouts, monitor muscle balance, and stay consistent
-                with a clean and simple fitness dashboard.
-            </p>
-
-            <button class="cta-btn" id="startTodayBtn">START TODAY →</button>
-
-            <button id="letsGrindBtn" class="cta-btn" style="display: none;"> LET'S GRIND →</button>
-
-        </div>
-
-        <div class="hero-image">
-            <img src="assets/phone.png" alt="EzGrind App Preview">
-        </div>
-
-    </section>
-    
-    <section id="todayWorkoutSection" style="display: none;">
-    <h3>Today’s Workout</h3>
-    <ul id="todayWorkoutList"></ul>
-
-    <a href="history.html" id="historyBtn" class="small-cta-btn" style="display:none;">
-    View Full History
-</a>
-
-    </section>
-    
-
-
-    <!-- Steps Section -->
-    <section class="steps">
-
-    <div class="steps-header">
-    <img src="assets/DB.png" alt="Dumbbell Icon">
-    <h2 class="steps-title">Hit your fitness goals in 1-2-3</h2>
+    <!-- Brand moment. Fixed and pointer-events:none, so it occupies no space,
+         shifts nothing, and cannot intercept a tap during the 650ms it exists;
+         motion.js removes it afterwards. Hidden entirely without .js-enabled.
+         aria-hidden because it is the logo repeated - the nav already names the
+         site, and a screen reader should not hear it twice. -->
+    <div class="intro-brand" aria-hidden="true">
+        <span class="intro-brand__word">
+            EzGrind
+            <span class="intro-brand__fill"><span>EzGrind</span></span>
+        </span>
     </div>
 
+    <header id="siteHeader" class="nav"></header>
 
-    <!-- Step 1 -->
-    <div class="step">
-        <div class="step-image">
-            <img src="assets/step1.png" alt="Track workouts">
+    <main class="page">
+
+        <!-- ============================================================
+             LANDING - signed out
+             ============================================================ -->
+        <div id="landingView" data-view hidden>
+
+            <!-- data-intro numbers are the stagger order, read by motion.css.
+                 The phone image keeps its width/height so its box is reserved
+                 before it loads: the intro only ever translates these
+                 elements, so nothing here can shift layout. -->
+            <section class="container hero intro-hero">
+                <div class="hero__text">
+                    <p class="eyebrow" data-intro="1">Track. Train. Triumph.</p>
+
+                    <h1 class="hero__title" data-intro="1">
+                        Your daily dose<br>
+                        of <span class="highlight">discipline</span>
+                    </h1>
+
+                    <p class="hero__body" data-intro="2">
+                        Log every set in seconds. Watch the weeks stack up into
+                        something you can actually measure.
+                    </p>
+
+                    <div class="cluster" data-intro="3">
+                        <a class="btn btn--primary btn--lg" href="signup.html">
+                            <span>Start Training</span>
+                        </a>
+                        <a class="btn btn--secondary btn--lg" href="login.html">
+                            <span>Log In</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- The glow is deliberately NOT inside a staggered element.
+                     Nested inside one it would inherit that element's opacity
+                     and stay invisible until 790ms, overriding its own 300ms
+                     start. Only the image is staggered. -->
+                <div class="hero__media">
+                    <div class="hero__glow" aria-hidden="true"></div>
+                    <img src="assets/phone.png" alt="The EzGrind workout log on a phone"
+                         width="752" height="564" fetchpriority="high" data-intro="4">
+                </div>
+            </section>
+
+            <!-- Below the fold: revealed by IntersectionObserver on scroll,
+                 never on load. .stagger already carried the intent in the
+                 markup; motion.css is what finally gives it a rule. -->
+            <section class="container section" aria-labelledby="howtoHeading">
+                <div class="section__head" data-reveal>
+                    <h2 id="howtoHeading">Hit your fitness goals in 1-2-3</h2>
+                    <p class="text-muted">No setup, no spreadsheet, no learning curve.</p>
+                </div>
+
+                <div class="grid grid--3" data-reveal-stagger>
+                    <article class="card howto">
+                        <img class="howto__media" src="assets/step1.png"
+                             alt="Choosing a muscle group and exercise, then entering weight and reps"
+                             width="415" height="585" loading="lazy">
+                        <span class="howto__number">1</span>
+                        <h3 class="howto__title">Track workouts and muscles</h3>
+                        <p class="text-muted">
+                            Pick a muscle, pick a movement, log the set. Four taps.
+                        </p>
+                    </article>
+
+                    <article class="card howto">
+                        <img class="howto__media" src="assets/step2.png"
+                             alt="A weekly overview showing training volume"
+                             width="398" height="497" loading="lazy">
+                        <span class="howto__number">2</span>
+                        <h3 class="howto__title">Follow your progress</h3>
+                        <p class="text-muted">
+                            Volume, frequency and streaks, worked out for you.
+                        </p>
+                    </article>
+
+                    <article class="card howto">
+                        <img class="howto__media" src="assets/step3.png"
+                             alt="A training habit built up over several weeks"
+                             width="331" height="414" loading="lazy">
+                        <span class="howto__number">3</span>
+                        <h3 class="howto__title">Stay consistent</h3>
+                        <p class="text-muted">
+                            The streak is the point. Everything else follows it.
+                        </p>
+                    </article>
+                </div>
+            </section>
+
+            <section class="container section" aria-labelledby="featuresHeading">
+                <div class="section__head" data-reveal>
+                    <h2 id="featuresHeading">Everything you need, nothing you don't</h2>
+                </div>
+
+                <div class="grid grid--cards" data-reveal-stagger>
+
+                    <article class="feature">
+                        <svg class="feature__icon" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                             stroke-linejoin="round" aria-hidden="true">
+                            <path d="M4 7h10M4 12h16M4 17h7"></path>
+                            <circle cx="19" cy="7" r="2"></circle>
+                        </svg>
+                        <h3 class="feature__title">Track every set</h3>
+                        <p class="text-muted">
+                            Weight, reps and a note if the set deserves one.
+                        </p>
+                    </article>
+
+                    <article class="feature">
+                        <svg class="feature__icon" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                             stroke-linejoin="round" aria-hidden="true">
+                            <circle cx="12" cy="12" r="8"></circle>
+                            <path d="M12 8v4l3 2"></path>
+                        </svg>
+                        <h3 class="feature__title">See your history</h3>
+                        <p class="text-muted">
+                            Every session you have ever logged, grouped by day.
+                        </p>
+                    </article>
+
+                    <article class="feature">
+                        <svg class="feature__icon" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                             stroke-linejoin="round" aria-hidden="true">
+                            <path d="M4 18l5-6 4 3 7-9"></path>
+                            <path d="M20 6v5h-5"></path>
+                        </svg>
+                        <h3 class="feature__title">Know your PRs</h3>
+                        <p class="text-muted">
+                            Your best effort on every lift, without the guesswork.
+                        </p>
+                    </article>
+
+                    <article class="feature">
+                        <svg class="feature__icon" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                             stroke-linejoin="round" aria-hidden="true">
+                            <path d="M12 3c3 4 5 6 5 9a5 5 0 0 1-10 0c0-1.5.7-2.9 1.8-4.2"></path>
+                            <path d="M12 17a2 2 0 0 0 2-2c0-1.2-1-2-2-3.5-1 1.5-2 2.3-2 3.5a2 2 0 0 0 2 2z"></path>
+                        </svg>
+                        <h3 class="feature__title">Watch your streak</h3>
+                        <p class="text-muted">
+                            The number that makes you go on the days you'd skip.
+                        </p>
+                    </article>
+
+                </div>
+            </section>
+
         </div>
-        <div class="step-text">
-            <span class="step-number">1</span>
-            <h3><span class="highlight">Track workouts and muscles</span></h3>
-            <p>
-                Log your exercises, sets, reps, and target muscles
-                with a clean and simple tracking system.
-            </p>
+
+
+        <!-- ============================================================
+             DASHBOARD - signed in
+             ============================================================ -->
+        <div id="dashboardView" data-view hidden>
+            <!-- One grid owns every gap on this page. Sections are direct
+                 children rather than nested row wrappers, so nothing sets its
+                 own margin and the rhythm cannot drift. -->
+            <div class="container section grid grid--2 dash">
+
+                <div class="dash__head">
+                    <div>
+                        <p class="eyebrow">Your training</p>
+                        <h1 class="dash__greeting" id="greeting"></h1>
+                    </div>
+                    <a class="btn btn--primary dash__action" href="log-workout.html">
+                        <span>Log Workout</span>
+                    </a>
+                </div>
+
+                <section class="stat-grid stagger" id="statGrid" aria-label="Training at a glance"></section>
+
+                    <section class="card" id="streakCard" aria-labelledby="streakHeading">
+                        <div class="card__header">
+                            <h2 class="card__title" id="streakHeading">Streak</h2>
+                        </div>
+                        <div class="streak" id="streakPanel"></div>
+                    </section>
+
+                    <section class="card" aria-labelledby="weightHeading">
+                        <div class="card__header">
+                            <h2 class="card__title" id="weightHeading">Bodyweight</h2>
+                        </div>
+
+                        <div id="weightPanel" class="weight-card"></div>
+
+                        <form class="weight-log" id="weightForm" novalidate>
+                            <div class="field">
+                                <label class="field__label sr-only" for="weight_kg">
+                                    Log today's weight in kilograms
+                                </label>
+                                <input class="input" type="number" id="weight_kg"
+                                       name="weight_kg" min="20" max="500" step="0.1"
+                                       inputmode="decimal" placeholder="Today's weight"
+                                       aria-describedby="weight_kgError">
+                            </div>
+                            <button type="submit" class="btn btn--secondary" id="weightBtn">
+                                <span>Log</span>
+                            </button>
+                        </form>
+                        <p class="form-error" id="weight_kgError" role="alert"></p>
+                    </section>
+
+                    <section class="card" aria-labelledby="todayHeading">
+                        <div class="card__header cluster cluster--between">
+                            <h2 class="card__title" id="todayHeading">Today's session</h2>
+                            <a class="btn btn--ghost btn--sm" href="history.html">
+                                <span>Full history</span>
+                            </a>
+                        </div>
+                        <div id="todayPanel" class="today__list"></div>
+                    </section>
+
+                    <section class="card" aria-labelledby="recentHeading">
+                        <div class="card__header">
+                            <h2 class="card__title" id="recentHeading">Recent workouts</h2>
+                        </div>
+                        <div id="recentPanel"></div>
+                    </section>
+
+                <section class="card dash__full" aria-labelledby="distributionHeading">
+                    <div class="card__header cluster cluster--between">
+                        <h2 class="card__title" id="distributionHeading">Muscle distribution</h2>
+                        <select class="select select--inline" id="distributionPeriod"
+                                aria-label="Distribution period">
+                            <option value="week">Last 7 days</option>
+                            <option value="month" selected>Last 30 days</option>
+                            <option value="year">Last 12 months</option>
+                        </select>
+                    </div>
+                    <div id="distributionPanel"></div>
+                </section>
+
+                <section class="card dash__full" aria-labelledby="prHeading">
+                    <div class="card__header">
+                        <h2 class="card__title" id="prHeading">Personal records</h2>
+                        <p class="text-muted">Best set per exercise, by estimated one-rep max.</p>
+                    </div>
+                    <div id="prPanel"></div>
+                </section>
+
+            </div>
         </div>
-    </div>
 
-    <!-- Step 2 -->
-    <div class="step reverse">
-        <div class="step-image">
-            <img src="assets/step2.png" alt="Progress tracking">
-        </div>
-        <div class="step-text">
-            <span class="step-number">2</span>
-            <h3><span class="highlight">Follow your progress</span></h3>
-            <p>
-                Visualize your weekly training, muscle balance,
-                and consistency to stay on track.
-            </p>
-        </div>
-    </div>
+    </main>
 
-    <!-- Step 3 -->
-    <div class="step">
-        <div class="step-image">
-            <img src="assets/step3.png" alt="Stay consistent">
-        </div>
-        <div class="step-text">
-            <span class="step-number">3</span>
-            <h3><span class="highlight">Stay consistent and improve</span></h3>
-            <p>
-                Build sustainable fitness habits and steadily
-                improve performance over time.
-            </p>
-        </div>
-    </div>
+    <footer id="siteFooter" class="footer"></footer>
 
-</section>
-
-
-    <footer class="footer">
-        EzGrind © 2026
-    </footer>
-
+    <script src="js/api.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/motion.js"></script>
+    <script src="js/components/shell.js"></script>
+    <script src="js/charts.js"></script>
     <script src="js/dashboard.js"></script>
-
-<!-- Auth Choice Modal -->
-<div id="authModal" class="auth-modal">
-    <div class="auth-modal-content">
-        <h3>Welcome to EzGrind 💪</h3>
-        <p>Please login or create an account to continue.</p>
-
-        <button id="loginRedirectBtn" class="small-cta-btn">
-            Log In
-        </button>
-
-        <button id="signupRedirectBtn" class="small-cta-btn">
-            Sign Up
-        </button>
-    </div>
-</div>
-
 
 </body>
 </html>

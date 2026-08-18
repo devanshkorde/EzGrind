@@ -1,0 +1,15 @@
+Welcome, {{ first_name }}
+
+Your log is ready. Every set you put in is kept — weight, reps, and the day
+you did it.
+
+EzGrind adds up your volume week over week and tells you the moment you beat
+a personal record.
+
+Open your dashboard:
+{{ dashboard_url }}
+
+You're getting this because someone signed up for EzGrind with this address.
+If that wasn't you, ignore this email.
+
+— EzGrind

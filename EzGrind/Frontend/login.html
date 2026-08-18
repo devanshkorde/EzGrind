@@ -1,48 +1,100 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>EzGrind | Login</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Log in to your EzGrind account to track workouts and progress.">
+    <title>EzGrind | Log In</title>
 
+    <link rel="icon" href="assets/logo.png">
+    <link rel="stylesheet" href="css/tokens.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/pages.css">
+    <link rel="stylesheet" href="css/motion.css">
+
+    <!-- Sets the class every hidden starting state in motion.css hangs
+         off. Inline and synchronous so it lands before first paint, and
+         absent if scripting is off - in which case nothing is ever
+         hidden and the page renders as ordinary content. -->
+    <script>document.documentElement.classList.add("js-enabled");</script>
 </head>
 <body>
-<link rel="stylesheet" href="css/theme.css">
-<div class="theme-card">
-     <h2>Login to EzGrind</h2>
 
-    <form id="loginForm">
-    <input type="email" id="email" placeholder="Email" class="auth-input" required><br><br>
-    <input type="password" id="password" placeholder="Password" class="auth-input" required><br><br>
+    <div class="auth-split">
 
-    <button type="submit" id="loginBtn" class="theme-btn">Login</button>
-</form>
-</div>
+        <header class="auth-brand">
+            <a class="auth-brand__mark" href="index.html">
+                <img src="assets/logo.png" alt="" width="48" height="48">
+                <span>EzGrind</span>
+            </a>
 
-<p id="status"></p>
+            <p class="auth-brand__copy">
+                Every session logged is a session that <em>counted</em>.
+            </p>
 
-<script>
-document.getElementById("loginForm").addEventListener("submit", function(e) {
-    e.preventDefault();
+            <p class="auth-brand__footnote">Track. Train. Triumph.</p>
+        </header>
 
-    fetch("http://127.0.0.1:5000/api/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",   // VERY IMPORTANT for sessions
-        body: JSON.stringify({
-            email: document.getElementById("email").value,
-            password: document.getElementById("password").value
-        })
-    })
-    .then(res => res.json())
-    .then(data => {
-        document.getElementById("status").innerText = data.message;
+        <main class="auth-split__form">
+            <div class="card">
 
-        if (data.user) {
-            // redirect after login
-            window.location.href = "index.html"; // dashboard
-        }
-    });
-});
-</script>
+                <div class="card__header">
+                    <h1 class="page-header__title">Log in</h1>
+                    <p class="page-header__subtitle">Pick up where you left off.</p>
+                </div>
+
+                <form id="loginForm" novalidate>
+
+                    <div class="field">
+                        <label class="field__label" for="email">Email</label>
+                        <input class="input" type="email" id="email" name="email"
+                               autocomplete="email" required
+                               aria-describedby="emailError">
+                        <p class="form-error" id="emailError"></p>
+                    </div>
+
+                    <div class="field">
+                        <label class="field__label" for="password">Password</label>
+                        <div class="input-wrap">
+                            <input class="input" type="password" id="password" name="password"
+                                   autocomplete="current-password" required
+                                   aria-describedby="passwordError">
+                            <button type="button" class="input__action"
+                                    id="passwordToggle" aria-pressed="false"
+                                    aria-controls="password">Show</button>
+                        </div>
+                        <p class="form-error" id="passwordError"></p>
+                        <p class="field__aside">
+                            <a href="forgot-password.html">Forgot password?</a>
+                        </p>
+                    </div>
+
+                    <p class="form-error" id="formError" role="alert"></p>
+
+                    <button type="submit" class="btn btn--primary btn--block" id="loginBtn">
+                        <span>Log In</span>
+                    </button>
+
+                </form>
+
+                <p class="card__footer">
+                    No account yet? <a href="signup.html">Create one</a>.
+                </p>
+
+            </div>
+        </main>
+
+    </div>
+
+    <footer id="siteFooter" class="footer"></footer>
+
+    <script src="js/api.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/motion.js"></script>
+    <script src="js/components/shell.js"></script>
+    <script src="js/login.js"></script>
 
 </body>
 </html>

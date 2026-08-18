@@ -2,43 +2,164 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Log a set in EzGrind: pick a muscle group and exercise, then record weight and reps.">
     <title>EzGrind | Log Workout</title>
 
-    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="assets/logo.png">
+    <link rel="stylesheet" href="css/tokens.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/pages.css">
+    <link rel="stylesheet" href="css/motion.css">
+
+    <!-- Sets the class every hidden starting state in motion.css hangs
+         off. Inline and synchronous so it lands before first paint, and
+         absent if scripting is off - in which case nothing is ever
+         hidden and the page renders as ordinary content. -->
+    <script>document.documentElement.classList.add("js-enabled");</script>
 </head>
 <body>
 
-    <nav class="navbar">
-        <h2>EzGrind</h2>
-    </nav>
+    <header id="siteHeader" class="nav"></header>
 
-    <section class="log-workout">
-    <link rel="stylesheet" href="css/theme.css">
-    <div class="theme-card">
-        
-        <h1>Log Workout</h1>
-        <form id="workoutForm">
-            <label>Muscle</label>
-            <select id="muscleSelect"></select>
+    <main class="page container section logger">
 
-            <label>Exercise</label>
-            <select id="exerciseSelect"></select>
+        <div class="page-header">
+            <h1 class="page-header__title">Log Workout</h1>
+            <p class="page-header__subtitle">Everything you log today lands in the same session.</p>
+        </div>
 
-            <label>Weight (kg)</label>
-            <input type="number" id="weight" required>
+        <div class="logger__grid">
 
-            <label>Reps</label>
-            <input type="number" id="reps" required>
+            <div class="stack stack--lg">
 
-            <label>Time Under Tension (seconds)</label>
-            <input type="number" id="tut">
+                <section class="card" aria-labelledby="muscleHeading">
+                    <div class="card__header">
+                        <h2 class="card__title" id="muscleHeading">
+                            <span class="step-marker">1</span> Muscle group
+                        </h2>
+                    </div>
+                    <div id="muscleGrid" class="muscle-grid" role="radiogroup"
+                         aria-labelledby="muscleHeading"></div>
+                </section>
 
-            <button type="submit">Add Set</button>
-        </form>
+                <section class="card is-hidden" id="exerciseCard" aria-labelledby="exerciseHeading">
+                    <div class="card__header">
+                        <h2 class="card__title" id="exerciseHeading">
+                            <span class="step-marker">2</span> Exercise
+                        </h2>
+                    </div>
+
+                    <div class="field">
+                        <label class="field__label sr-only" for="exerciseSearch">Search exercises</label>
+                        <input class="input" type="search" id="exerciseSearch"
+                               placeholder="Search exercises…" autocomplete="off">
+                    </div>
+
+                    <div id="exerciseList" class="option-list" role="radiogroup"
+                         aria-labelledby="exerciseHeading"></div>
+                </section>
+
+                <section class="card is-hidden" id="setCard" aria-labelledby="setHeading">
+                    <div class="card__header">
+                        <h2 class="card__title" id="setHeading">
+                            <span class="step-marker">3</span> <span id="setCardTitle">Set details</span>
+                        </h2>
+                        <p class="text-muted" id="lastSetHint"></p>
+                    </div>
+
+                    <form id="setForm" novalidate>
+
+                        <div class="grid grid--2">
+                            <div class="field">
+                                <label class="field__label" for="weight">Weight (kg)</label>
+                                <div class="stepper">
+                                    <button type="button" class="stepper__btn" data-step="-2.5"
+                                            data-target="weight" aria-label="Decrease weight">−</button>
+                                    <input class="input stepper__input" type="number" id="weight"
+                                           name="weight" min="0" max="500" step="0.5"
+                                           inputmode="decimal" required aria-describedby="weightError">
+                                    <button type="button" class="stepper__btn" data-step="2.5"
+                                            data-target="weight" aria-label="Increase weight">+</button>
+                                </div>
+                                <p class="form-error" id="weightError"></p>
+                            </div>
+
+                            <div class="field">
+                                <label class="field__label" for="reps">Reps</label>
+                                <div class="stepper">
+                                    <button type="button" class="stepper__btn" data-step="-1"
+                                            data-target="reps" aria-label="Decrease reps">−</button>
+                                    <input class="input stepper__input" type="number" id="reps"
+                                           name="reps" min="1" max="100" step="1"
+                                           inputmode="numeric" required aria-describedby="repsError">
+                                    <button type="button" class="stepper__btn" data-step="1"
+                                            data-target="reps" aria-label="Increase reps">+</button>
+                                </div>
+                                <p class="form-error" id="repsError"></p>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label class="field__label" for="comments">Comments</label>
+                            <textarea class="textarea" id="comments" name="comments" rows="2"
+                                      maxlength="500"
+                                      placeholder="Form cues, rest time, how it felt."
+                                      aria-describedby="commentsError"></textarea>
+                            <p class="form-error" id="commentsError"></p>
+                        </div>
+
+                        <p class="form-error" id="formError" role="alert"></p>
+
+                        <button type="submit" class="btn btn--primary btn--block btn--lg" id="addSetBtn">
+                            <span>Add Set</span>
+                        </button>
+
+                    </form>
+                </section>
+
+            </div>
+
+            <section class="card logger__session" aria-labelledby="sessionHeading">
+                <div class="card__header cluster cluster--between">
+                    <h2 class="card__title" id="sessionHeading">Today's session</h2>
+                    <a class="btn btn--ghost btn--sm" href="history.html">
+                        <span>History</span>
+                    </a>
+                </div>
+                <div id="sessionList" class="session-list"></div>
+            </section>
+
+        </div>
+
+    </main>
+
+    <div class="summary-bar is-hidden" id="summaryBar" aria-live="polite">
+        <div class="container summary-bar__inner">
+            <div class="summary-bar__stat">
+                <span class="summary-bar__label">Sets</span>
+                <span class="summary-bar__value" id="summarySets">0</span>
+            </div>
+            <div class="summary-bar__stat">
+                <span class="summary-bar__label">Volume</span>
+                <span class="summary-bar__value" id="summaryVolume">0 kg</span>
+            </div>
+            <div class="summary-bar__stat">
+                <span class="summary-bar__label">Elapsed</span>
+                <span class="summary-bar__value" id="summaryElapsed">—</span>
+            </div>
+        </div>
     </div>
-    <p id="status"></p>
-    </section>
 
+    <footer id="siteFooter" class="footer"></footer>
+
+    <script src="js/api.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/motion.js"></script>
+    <script src="js/components/shell.js"></script>
     <script src="js/logWorkout.js"></script>
+
 </body>
 </html>
