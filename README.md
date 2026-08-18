@@ -17,17 +17,9 @@ files the browser runs.
 | **Log a workout** | Pick a muscle group from a visual grid, pick an exercise, enter weight and reps with large touch targets. Weight and reps prefill from your last set of that exercise. Sets accumulate in a live session panel with a running total and elapsed time. |
 | **History** | Sessions grouped by day, each expanding to a table of exercises and sets with estimated 1RM. Filter by date range, muscle group or exercise; filters live in the URL so a view is shareable. Volume-over-time chart. |
 | **Dashboard** | Streak with a 7-day dot row, workouts this week, total volume, sets per workout, bodyweight with goal-aware trend, today's session, recent workouts, muscle distribution, and personal records. |
-| **Exercise library** | 48 exercises across 12 muscle groups, searchable and filterable, each opening a detail panel with your own numbers on that lift. |
+| **Exercise library** | ~2,900 exercises across 16 muscle groups, searchable and filterable, each opening a detail panel with your own numbers on that lift. |
 | **Profile** | Age, height, weight and BMI with a scale, inline editing, password change, and account deletion behind a typed confirmation. |
 | **Bodyweight** | Log daily, chart it over 1M/3M/6M/1Y/All, with change over 30 days coloured by whether it moves toward your stated goal. |
-
----
-
-## Screenshots
-
-> Not yet captured. Run the app locally (below) and the pages worth grabbing are
-> `index.html` signed in, `log-workout.html` mid-session, and `history.html` with
-> a few sessions logged.
 
 ---
 
@@ -38,218 +30,233 @@ no bundler, no dependencies. Charts are hand-written inline SVG.
 
 **Backend** — Python 3.10, Flask 3, PostgreSQL 16 via `psycopg2` with a threaded
 connection pool. Session-cookie auth, scrypt password hashing, per-route rate
-limiting.
+limiting. Gunicorn in production.
 
-**Database** — PostgreSQL 16, hosted on [Neon](https://neon.tech). Schema
-managed by numbered, forward-only migration files applied by hand. Substring
-search over the exercise catalogue uses a `pg_trgm` GIN index.
+**Database** — PostgreSQL 16, hosted on [Neon](https://neon.tech). Numbered,
+forward-only migrations applied by hand. Substring search over the exercise
+catalogue uses a `pg_trgm` GIN index.
+
+**Email** — [Resend](https://resend.com), with a console backend for local work.
 
 ---
 
-## Local setup
+## Repository layout
+
+```
+EzGrind/
+├─ Backend/
+│  ├─ app.py                  application factory; exposes module-level `app`
+│  ├─ config.py               environment; refuses to boot without secrets
+│  ├─ db.py                   connection pool, Neon-aware
+│  ├─ repositories/           all SQL lives here
+│  ├─ routes/                 blueprints, one per subject
+│  ├─ services/               email
+│  ├─ scripts/                operational tools (import, plans, migration)
+│  └─ tests/                  runnable self-checks
+├─ Database/
+│  ├─ migrations/             001_schema.sql, 002_search.sql
+│  ├─ migrations_mysql_archive/  the pre-Postgres history
+│  ├─ seeds/                  16 muscle groups, 48 curated exercises
+│  ├─ data/                   megaGymDataset.csv
+│  └─ queries/scratch.sql     ad-hoc queries, never applied automatically
+└─ Frontend/                  served by Flask; no build step
+```
+
+---
+
+# LOCAL SETUP
 
 ### 1. Prerequisites
 
-- Python 3.10+
-- A PostgreSQL 16 database. A free [Neon](https://neon.tech) project is what
-  this is developed against; any Postgres 16 works, local or hosted.
-- `psql`, for applying the schema
-- A static file server for the frontend (VS Code's **Live Server** extension is
-  what this was developed against)
+- **Python 3.10** (see `.python-version`)
+- A **PostgreSQL 16** database — a free [Neon](https://neon.tech) project is what
+  this is developed against; any Postgres 16 works
+- **psql**, for applying migrations
 
-### 2. Create the database
-
-Set `DATABASE_URL` to your connection string first — Neon shows it under
-**Connection Details → psycopg2**.
+### 2. Clone and create the virtualenv
 
 ```bash
-cd EzGrind/Database
+git clone https://github.com/devanshkorde/EzGrind.git
+cd EzGrind/EzGrind/Backend
 
+python3 -m venv venv
+source venv/bin/activate          # Windows: .\venv\Scripts\activate
+pip install -r requirements.txt
+```
+
+### 3. Configure
+
+```bash
+cp .env.example .env
+python -c "import secrets; print(secrets.token_hex(32))"
+```
+
+Open `.env`, paste that value into `SECRET_KEY`, and set `DATABASE_URL` to your
+Neon connection string (**Connection Details → psycopg2**). The app refuses to
+start without both — a default secret key is worse than a crash, because the
+crash gets noticed.
+
+### 4. Create the schema
+
+```bash
+cd ../Database
 psql "$DATABASE_URL" -f migrations/001_schema.sql
 psql "$DATABASE_URL" -f migrations/002_search.sql
 psql "$DATABASE_URL" -f seeds/muscle_groups_and_exercises.sql
 ```
 
-**The seed is not optional** — without it the muscle and exercise dropdowns are
-empty and no workout can be logged. It also resets the identity sequences past
-the ids it writes, which is what stops the first exercise you add colliding
-with `Bench Press`.
+Migrations are applied **in order** and are forward-only. The seed is **not
+optional** — without it the muscle and exercise dropdowns are empty, no workout
+can be logged, and the exercise import has no muscle groups to map onto.
 
-Full details, including the ER diagram and a description of every column, are in
-[`EzGrind/Database/README.md`](EzGrind/Database/README.md).
+### 5. Import the exercise catalogue
 
-### 3. Configure the backend
+```bash
+cd ../Backend
+python scripts/import_exercises.py             # dry run — writes nothing
+python scripts/import_exercises.py --write     # ~2,900 exercises
+```
+
+Dry run is the default. Re-running is harmless: it keys on
+`(lower(exercise_name), muscle_id)`, existing rows win, and the CSV may only
+fill blanks. Roughly half the imported rows have no description — that is the
+data, not a bug, and the UI says so explicitly.
+
+### 6. Run it
+
+```bash
+cd ../..          # repository root
+./run.sh          # Windows: .\run.ps1
+```
+
+Then open **http://127.0.0.1:5000**.
+
+> **Not Live Server, and not port 5500.** Flask serves the frontend itself, so
+> the whole app is one origin. That is what lets the frontend call `/api`
+> relatively and what makes the `SameSite=Lax` session cookie work. Opening the
+> HTML from a different port will appear to log you in and then 401 every
+> request.
+
+### Running the tests
 
 ```bash
 cd EzGrind/Backend
-
-python -m venv venv
-.\venv\Scripts\activate          # Windows (python.org)
-# .\venv\bin\activate            # Windows (msys2/MinGW builds use bin\)
-# source venv/bin/activate       # macOS / Linux
-
-pip install -r requirements.txt
-
-cp .env.example .env             # copy .env.example on Windows
-python -c "import secrets; print(secrets.token_hex(32))"
-```
-
-Open `.env` and set `SECRET_KEY` to the generated value and `DATABASE_URL` to
-your connection string. **The app refuses to start if either is missing** — a
-default secret key is worse than a crash, because the crash gets noticed.
-`sslmode=require` is appended to the URL automatically if you leave it off;
-libpq's default would quietly downgrade to plaintext instead of failing.
-
-### Migrating existing MySQL data
-
-If you have data in the old MySQL database, copy it across with:
-
-```bash
-cd EzGrind/Backend
-pip install mysql-connector-python==8.4.0   # only needed for this one script
-
-python scripts/migrate_mysql_to_postgres.py --dry-run
-python scripts/migrate_mysql_to_postgres.py
-```
-
-It preserves every primary key, so `workout_sets` keeps pointing at the right
-workouts and exercises, and it resets all eight identity sequences afterwards.
-Skip the seed file in that case — the reference tables come across too.
-
-### 4. Run both halves
-
-```bash
-# from the repository root
-.\run.ps1
-```
-
-Or manually:
-
-```bash
-cd EzGrind/Backend && python app.py     # http://127.0.0.1:5000
-```
-
-Then serve `EzGrind/Frontend` with Live Server and open
-**`http://127.0.0.1:5500`**.
-
-> **Use `127.0.0.1`, not `localhost`.** See troubleshooting below — this is the
-> single most common way to get a login that appears to succeed and then doesn't.
-
-### 5. Verify
-
-```bash
-cd EzGrind/Backend
-python smoke.py            # API contract, read-only
-python check_config.py     # configuration guards
+python tests/check_config.py           # config matrix, no database needed
+python tests/smoke.py                  # API contract, read-only
+python tests/smoke.py --write          # + signup and log-a-set
+python tests/check_resend.py           # email paths, sends nothing
+python tests/check_password_reset.py   # reset flow and password policy
+python scripts/check_plans.py          # EXPLAIN every query, assert indexes
 
 cd ../Frontend
-python check_frontend.py   # markup, CSS and JS invariants
-node check_stats.js        # date and formatting logic
+python tests/check_frontend.py         # HTML/CSS invariants
+node tests/check_stats.js              # dashboard date/name formatting
 ```
-
-`smoke.py --write` additionally exercises signup, logging sets and deletion. It
-creates two throwaway accounts and removes them again at the end.
 
 ---
 
-## Project structure
+# DEPLOYING TO RENDER
+
+Create a **Web Service** pointed at this repository, branch **`main`**.
+
+### Build command
 
 ```
-EzGrind/
-├─ Backend/
-│  ├─ app.py                  application factory and blueprint registration
-│  ├─ config.py               environment loading; refuses to start without secrets
-│  ├─ db.py                   connection pool and context managers
-│  ├─ errors.py               ApiError and the JSON error contract
-│  ├─ auth.py                 @login_required, session helpers, rate limiter
-│  ├─ validators.py           request field extraction and domain rules
-│  ├─ routes/                 HTTP layer — parse, validate, call a repo, serialise
-│  ├─ repositories/           every SQL statement in the application
-│  ├─ smoke.py                end-to-end API checks
-│  └─ check_config.py         configuration self-check
-│
-├─ Database/
-│  ├─ migrations/             numbered, idempotent, forward-only
-│  ├─ seeds/                  reference data
-│  └─ queries/scratch.sql     ad-hoc queries and the PR rebuild statement
-│
-└─ Frontend/
-   ├─ *.html                  nine pages, no templating
-   ├─ css/                    tokens → base → components → layout → pages
-   ├─ js/
-   │  ├─ api.js               the only file that calls fetch()
-   │  ├─ ui.js                toasts, dialogs, skeletons, empty and error states
-   │  ├─ charts.js            inline SVG charts
-   │  ├─ components/shell.js  nav, footer and skip link, injected everywhere
-   │  └─ *.js                 one script per page
-   ├─ check_frontend.py       static checks over markup, CSS and JS
-   └─ check_stats.js          logic checks against the shipped dashboard source
+pip install -r EzGrind/Backend/requirements.txt
 ```
 
-The reasoning behind this layout is in
-[`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md). Every endpoint is documented in
-[`docs/API.md`](docs/API.md).
+### Start command
+
+```
+gunicorn --chdir EzGrind/Backend app:app --bind 0.0.0.0:$PORT --workers 2 --timeout 60
+```
+
+`app.py` exposes a module-level `app`, so `app:app` resolves directly.
+`--chdir` puts `EzGrind/Backend` on `sys.path` so `import config` and friends
+work. `$PORT` is supplied by Render — never hardcode 5000; `app.run()` is
+guarded by `__main__` and gunicorn never reaches it.
+
+### Python version
+
+`.python-version` at the repository root pins **3.10.11**. Without it Render
+picks its own default, which drifts upward over time and will eventually not be
+the interpreter you developed against.
+
+### Environment variables
+
+| Variable | Value |
+|---|---|
+| `SECRET_KEY` | `python -c "import secrets; print(secrets.token_hex(32))"`. **Use a different one than local.** Rotating it signs everyone out; nothing else breaks. |
+| `DATABASE_URL` | Neon connection string. `sslmode=require` is appended automatically if absent. |
+| `FLASK_ENV` | `production` — turns off debug and sets `Secure` on the session cookie. |
+| `APP_BASE_URL` | **Your production `https://` URL.** See the warning below. |
+| `EMAIL_BACKEND` | `resend` |
+| `RESEND_API_KEY` | From the Resend dashboard. Required when `EMAIL_BACKEND=resend`; the app refuses to boot without it. |
+| `MAIL_FROM_ADDRESS` | An address on a **verified domain**. See the warning below. |
+| `MAIL_FROM_NAME` | `EzGrind` |
+| `ALLOWED_ORIGINS` | Your production URL. Unused while the app is single-origin, but keep it correct. |
+| `DB_POOL_SIZE` | `5`. This is **per gunicorn worker** — 2 workers × 5 = 10 connections against Neon's limit. |
+
+> ### ⚠️ `APP_BASE_URL` must be the production HTTPS URL
+> Emails cannot use relative links, so every password-reset and welcome link is
+> built from this one value. If it still says `http://127.0.0.1:5000`, every
+> link you send is dead on arrival — and the send still reports success, so
+> nothing will tell you.
+
+> ### ⚠️ `MAIL_FROM_ADDRESS` must be a verified domain
+> `onboarding@resend.dev` is Resend's sandbox sender. It delivers **only** to
+> the address that owns the Resend account and rejects every other recipient
+> with a 403. Signups and resets appear to succeed while nobody receives
+> anything, because an email failure deliberately never fails the request that
+> triggered it. Verify a domain at <https://resend.com/domains> first. The app
+> logs a warning at boot if you launch with the sandbox sender.
+
+### Migrations on Render
+
+There is no migration runner and no release phase configured. Apply schema
+changes yourself against the production `DATABASE_URL` **before** deploying the
+code that needs them, exactly as in local setup step 4.
 
 ---
 
 ## Troubleshooting
 
-### Login seems to work, but you're still signed out
+**First request after a pause takes several seconds.**
+Neon's free tier scales compute to zero when idle. The first query pays a resume
+penalty. `db.py` pings each pooled connection before handing it out and
+reconnects if it is dead, so this costs latency, not an error.
 
-**Almost always the hostname.** Open the frontend at `http://127.0.0.1:5500`, not
-`http://localhost:5500`.
+**First request after 15 minutes takes ~50 seconds.**
+Different problem, same symptom. Render's free tier spins a service down after
+15 minutes of no traffic, and the next request has to boot the container. Not
+fixable on the free plan; a paid instance or an external uptime pinger avoids it.
 
-Cookies ignore ports but not hostnames, so `localhost:5500` → `127.0.0.1:5000` is
-a *cross-site* request. In development the session cookie is `SameSite=Lax`, which
-browsers refuse to send cross-site. The login succeeds, the cookie is set, and
-then never comes back — so every subsequent request is anonymous.
+**`sslmode` errors, or connections mysteriously refused.**
+Neon requires TLS. `config.py` appends `sslmode=require` if your `DATABASE_URL`
+omits it — libpq's default is `prefer`, which silently *downgrades* to plaintext
+rather than failing, so this is forced rather than trusted.
 
-Check it in DevTools → Application → Cookies. If there's a `session` cookie but
-requests are still 401ing, this is why.
+**`pip install psycopg2-binary` fails on Windows.**
+Only on MSYS2/mingw64 Python, whose platform tag is `mingw_x86_64` while every
+PyPI wheel is `win_amd64` — so pip falls through to a source build that fails.
+Either use a python.org CPython, or install MSYS2's prebuilt package and copy it
+into the venv. Full instructions are in the comment in `requirements.txt`. This
+never affects Render, which is Linux.
 
-### `Access to fetch … has been blocked by CORS policy`
+**Login succeeds, then every request 401s.**
+You are opening the frontend from a different origin than the API — typically
+Live Server on `:5500`. Use `http://127.0.0.1:5000`.
 
-The origin you're browsing from isn't in `ALLOWED_ORIGINS`. Add it to `.env`:
+**The exercise library is empty.**
+The seed or the import has not been run. See local setup steps 4 and 5.
 
-```
-ALLOWED_ORIGINS=http://localhost:5500,http://127.0.0.1:5500
-```
-
-Then **restart the backend** — `.env` is read once at import, and Flask's reloader
-watches `.py` files, not `.env`.
-
-Note that a wildcard origin is not an option: browsers reject `*` on credentialed
-requests, which is exactly what a session cookie makes this.
-
-### `ConfigError: SECRET_KEY is not set`
-
-Working as designed. Copy `.env.example` to `.env` and fill in `SECRET_KEY` and
-`DB_PASSWORD`. There are no fallback defaults for either.
-
-### `Can't reach the server — is the backend running?`
-
-The Flask process isn't up, or it crashed. Check the terminal running `app.py`.
-
-### Opening the frontend from `file://`
-
-Won't work. The `file://` origin is `null`, which can't be allow-listed for
-credentialed requests. Serve it over HTTP.
-
-### Logging a set returns 500
-
-A migration hasn't been applied. `workout_sets` needs `set_order` and `comments`,
-which arrive in `002` and `004`. Verify with:
-
-```sql
-SHOW COLUMNS FROM workout_sets;
-```
-
-### Everything looks unstyled after an update
-
-Cached CSS. Hard-refresh with **Ctrl+Shift+R**.
+**`ON CONFLICT` errors during the exercise import.**
+The seed has not been applied, so the muscle groups the CSV maps onto do not
+exist. Run the seed first.
 
 ---
 
 ## Licence
 
-Not yet chosen.
+MIT — see [LICENSE](LICENSE). The exercise dataset in `Database/data/` is
+third-party and carries its own terms.

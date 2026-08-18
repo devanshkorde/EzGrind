@@ -15,13 +15,17 @@ Database/
 │  └─ 001-008                         the MySQL originals, kept as history
 ├─ seeds/
 │  └─ muscle_groups_and_exercises.sql 16 muscle groups, 48 exercises
+├─ data/
+│  └─ megaGymDataset.csv              2,918 rows, the import source
 ├─ scripts/
-│  ├─ import_exercises.py             the ~2,900 row megaGym import
 │  └─ make_placeholder.py             generates assets/muscles/placeholder.png
-├─ queries/
-│  └─ scratch.sql                     ad-hoc queries, never applied automatically
-└─ EzGrindDB.sql                      obsolete, kept as a pointer
+└─ queries/
+   └─ scratch.sql                     ad-hoc queries, never applied automatically
 ```
+
+The exercise importer lives in `../Backend/scripts/import_exercises.py`, not
+here: it imports `db` and `config` from the application, so it belongs on the
+Backend's import path rather than reaching across the tree for it.
 
 ---
 
@@ -42,13 +46,18 @@ Without the seed file the muscle and exercise dropdowns are empty, no workout
 can be logged, and every feature downstream of exercise selection is dead. It is
 not optional for a fresh install.
 
-Then optionally load the full catalogue:
+Then load the full catalogue. Dry run is the default; writing takes `--write`:
 
 ```bash
-cd scripts
-python import_exercises.py "D:\megaGymDataset.csv" --dry-run
-python import_exercises.py "D:\megaGymDataset.csv"
+cd ../Backend
+python scripts/import_exercises.py             # reports, writes nothing
+python scripts/import_exercises.py --write     # ~2,900 exercises
 ```
+
+It reads `Database/data/megaGymDataset.csv` by default — pass `--csv` to point
+it elsewhere. It ends by calling `setval` on the exercise_id sequence, which
+matters because the seed writes ids 1-48 explicitly and an identity sequence
+does not advance for a supplied id.
 
 ## Migrating from the old MySQL database
 
@@ -234,9 +243,11 @@ impossibility into a 500 on a password reset. `expires_at` and `used_at` are
 
 ---
 
-## `EzGrindDB.sql`
+## `migrations_mysql_archive/EzGrindDB.sql`
 
-Obsolete. It was a MySQL scratchpad that mixed table definitions, exploratory
+Obsolete, and moved into the archive alongside the MySQL migrations it predates
+— it was sitting next to the live Postgres files, which invited someone to run
+it. It was a MySQL scratchpad that mixed table definitions, exploratory
 `SELECT`s and later `ALTER` fixes into one file, so running it top to bottom
 produced tables that were then patched by statements further down. Superseded
 by `migrations/001_schema.sql`; its queries moved to `queries/scratch.sql`. The

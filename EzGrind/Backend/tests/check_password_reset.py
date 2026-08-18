@@ -19,13 +19,19 @@ import secrets
 import sys
 from contextlib import redirect_stdout
 from datetime import datetime, timedelta, timezone
+from pathlib import Path
 
-import config
-from app import create_app
-from db import get_cursor
-from repositories import reset_token_repo, user_repo
-from services import email_service
-from werkzeug.security import check_password_hash
+# Python puts THIS file's directory on sys.path, which is Backend/tests/.
+# The application lives one level up, so it has to be added explicitly - this
+# file used to sit in Backend/ and get it for free.
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+import config  # noqa: E402
+from app import create_app  # noqa: E402
+from db import get_cursor  # noqa: E402
+from repositories import reset_token_repo, user_repo  # noqa: E402
+from services import email_service  # noqa: E402
+from werkzeug.security import check_password_hash  # noqa: E402
 
 PASSED, FAILED = [], []
 

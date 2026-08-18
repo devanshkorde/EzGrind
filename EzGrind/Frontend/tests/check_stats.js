@@ -19,7 +19,9 @@
 const fs = require("fs");
 const assert = require("assert");
 
-const SOURCE = require("path").join(__dirname, "js", "dashboard.js");
+/* ".." because this file lives in Frontend/tests/ and dashboard.js is in
+   Frontend/js/. */
+const SOURCE = require("path").join(__dirname, "..", "js", "dashboard.js");
 
 let source = fs.readFileSync(SOURCE, "utf8");
 const marker = "    if (document.readyState === \"loading\") {";

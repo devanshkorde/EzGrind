@@ -21,11 +21,17 @@ import sys
 import time
 import urllib.error
 from contextlib import redirect_stdout
+from pathlib import Path
 
-import config
-from app import create_app
-from db import get_cursor
-from services import email_service, email_templates
+# Python puts THIS file's directory on sys.path, which is Backend/tests/.
+# The application lives one level up, so it has to be added explicitly - this
+# file used to sit in Backend/ and get it for free.
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+import config  # noqa: E402
+from app import create_app  # noqa: E402
+from db import get_cursor  # noqa: E402
+from services import email_service, email_templates  # noqa: E402
 
 PASSED, FAILED = [], []
 

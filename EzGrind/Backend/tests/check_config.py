@@ -13,7 +13,7 @@ import sys
 import types
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 stub = types.ModuleType("dotenv")
 stub.load_dotenv = lambda *a, **k: False

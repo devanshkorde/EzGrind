@@ -1,12 +1,23 @@
 # Virtualenv
+#
+# ONLY the directory names that unambiguously mean "a virtualenv". The entries
+# below used to also list bin/, lib/, lib64/, include/, Scripts/ and
+# pyvenv.cfg - the contents of a venv rather than the venv itself. Every one of
+# those is unanchored, so it matched at ANY depth, and git sets
+# core.ignorecase=true on Windows, which made `Scripts/` match `scripts/` too.
+#
+# The result was silent: EzGrind/Database/scripts/ and EzGrind/Backend/scripts/
+# were excluded from every commit, so a clean clone had no exercise importer, no
+# EXPLAIN harness and no data-migration script, and nothing ever said so.
+#
+# Anything that needs ignoring inside a venv is already inside venv/.
 venv/
 .venv/
-bin/
-lib/
-lib64/
-include/
-Scripts/
-pyvenv.cfg
+
+# An orphaned venv bin/ left at Backend level by an old `python -m venv .`.
+# Named explicitly rather than with a bare `bin/`, which would match any
+# directory called bin anywhere in the tree.
+EzGrind/Backend/bin/
 
 # Python
 __pycache__/

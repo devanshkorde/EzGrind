@@ -13,7 +13,9 @@ import sys
 from html.parser import HTMLParser
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent
+# parents[1], not parent: this file lives in Frontend/tests/ and every path
+# below is relative to Frontend/ itself.
+ROOT = Path(__file__).resolve().parents[1]
 
 PAGES = ["index.html", "login.html", "signup.html", "profile.html",
          "log-workout.html", "exercises.html", "history.html",

@@ -225,10 +225,16 @@ Four self-checks, no framework:
 
 | Command | Checks |
 |---|---|
-| `python smoke.py [--write]` | The whole API contract: auth, scoping, validation, pagination, cross-user isolation |
-| `python check_config.py` | Configuration refuses to start without secrets; the cookie matrix |
-| `python check_frontend.py` | Markup structure, CSS layering, no hex outside tokens, no `fetch` outside `api.js`, no ungated `:hover`, every `vh` has a `dvh` |
-| `node check_stats.js` | Date and formatting logic against the shipped source |
+| `python tests/smoke.py [--write]` | The whole API contract: auth, scoping, validation, pagination, cross-user isolation |
+| `python tests/check_config.py` | Configuration refuses to start without secrets; the cookie matrix |
+| `python tests/check_resend.py` | Every email path and failure branch, against a stubbed Resend |
+| `python tests/check_password_reset.py` | The reset flow, the password policy, and the concurrency regression |
+| `python tests/check_frontend.py` | Markup structure, CSS layering, no hex outside tokens, no `fetch` outside `api.js`, no ungated `:hover`, every `vh` has a `dvh` |
+| `node tests/check_stats.js` | Date and formatting logic against the shipped source |
+| `python scripts/check_plans.py` | Every query's EXPLAIN plan, asserting the intended index is used |
+
+Backend checks live in `EzGrind/Backend/tests/`, frontend ones in
+`EzGrind/Frontend/tests/`, and both are run from the directory above.
 
 They run against the real files rather than copies, so they fail when the code
 they describe changes shape.
